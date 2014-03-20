@@ -9,4 +9,3 @@ Android learning code. The sub-projects play around with some Android features:
 
  - using openpgp via aidl
 
-
