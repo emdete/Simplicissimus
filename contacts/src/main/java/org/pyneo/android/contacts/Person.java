@@ -1,5 +1,6 @@
 package org.pyneo.android.contacts;
 
+import android.util.Log;
 import android.database.Cursor;
 import android.content.Context;
 import android.provider.ContactsContract.Contacts;
@@ -26,5 +27,24 @@ public class Person extends HashMap<String,Object> {
 
 	public Parcels getParcels() {
 		return new Parcels(context, (Long)get(Contacts._ID));
+	}
+
+	public static String test(Context context) {
+		int a = 0;
+		int b = 0;
+		int c = 0;
+		for (Person person : new Persons(context)) {
+			a++;
+			// Log.d(TAG, "person=" + person);
+			for (Parcel parcel : person.getParcels()) {
+				b++;
+				// Log.d(TAG, "parcel=" + parcel);
+				for (Asset asset : parcel.getDs()) {
+					c++;
+					Log.d(TAG, "asset=" + asset);
+				}
+			}
+		}
+		return "read " + a + '/' + b + '/' + c;
 	}
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import org.pyneo.android.contacts.Person;
 
 public class SingleButtonTester extends Activity {
 	static final String TAG = SingleButtonTester.class.getName();
@@ -68,15 +69,6 @@ public class SingleButtonTester extends Activity {
 
 	public void doTest(Context context) {
 		Button button = (Button)findViewById(R.id.button);
-		button.setText("Started");
-		for (Person person : new Persons(context)) {
-			// Log.d(TAG, "person=" + person);
-			for (Parcel parcel : person.getParcels()) {
-				// Log.d(TAG, "parcel=" + parcel);
-				for (Asset asset : parcel.getDs()) {
-					Log.d(TAG, "asset=" + asset);
-				}
-			}
-		}
+		button.setText(Person.test(context));
 	}
 }
