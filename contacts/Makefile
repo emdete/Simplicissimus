@@ -8,7 +8,7 @@ run:
 
 dbg: run
 	/usr/local/android/sdk/platform-tools/adb install -r build/apk/*-debug-unaligned.apk
-	adb shell am start org.pyneo.android.contacts/.Contacts
+	adb shell am start org.pyneo.android.gui/.SingleButtonTester
 
 clean:
 	ANDROID_HOME=/usr/local/android/sdk \

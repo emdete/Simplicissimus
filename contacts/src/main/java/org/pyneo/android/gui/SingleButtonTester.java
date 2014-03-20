@@ -1,4 +1,4 @@
-package org.pyneo.android.contacts;
+package org.pyneo.android.gui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,8 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-public class Contacts extends Activity {
-	static final String TAG = Contacts.class.getName();
+public class SingleButtonTester extends Activity {
+	static final String TAG = SingleButtonTester.class.getName();
 	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
@@ -66,7 +66,9 @@ public class Contacts extends Activity {
 		if (DEBUG) Log.d(TAG, "onDestroy");
 	}
 
-	public static void doTest(Context context) {
+	public void doTest(Context context) {
+		Button button = (Button)findViewById(R.id.button);
+		button.setText("Started");
 		for (Person person : new Persons(context)) {
 			// Log.d(TAG, "person=" + person);
 			for (Parcel parcel : person.getParcels()) {
