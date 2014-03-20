@@ -2,11 +2,8 @@ package org.pyneo.android;
 
 import android.database.Cursor;
 import android.content.Context;
-import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.RawContacts;
-import android.provider.ContactsContract.Data;
-import android.util.Log;
-import java.util.Map;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.lang.UnsupportedOperationException;
@@ -15,11 +12,11 @@ public abstract class EasyDb<S extends HashMap<String,Object>> extends HashMap<S
 	static final String TAG = EasyDb.class.getName();
 
 	Context context;
-	Cursor c;
+	Cursor cursor;
 	String[] columnNames;
 
 	public EasyDb(long contactId) {
-		c = context.getContentResolver().query(
+		cursor = context.getContentResolver().query(
 			RawContacts.CONTENT_URI,
 			new String[]{RawContacts._ID,
 				RawContacts.CONTACT_ID, RawContacts.AGGREGATION_MODE,
@@ -33,8 +30,8 @@ public abstract class EasyDb<S extends HashMap<String,Object>> extends HashMap<S
 			RawContacts.CONTACT_ID + "=?",
 			new String[]{String.valueOf(contactId)},
 			null);
-		c.moveToFirst();
-		columnNames = c.getColumnNames();
+		cursor.moveToFirst();
+		columnNames = cursor.getColumnNames();
 	}
 
 	public Iterator<S> iterator() {
@@ -42,22 +39,22 @@ public abstract class EasyDb<S extends HashMap<String,Object>> extends HashMap<S
 	}
 
 	public boolean hasNext() {
-		return !c.isClosed() && !c.isAfterLast();
+		return !cursor.isClosed() && !cursor.isAfterLast();
 	}
 
 	public S next() {
 		S map = getSub();
 		for (int i=0;i<columnNames.length;i++) {
-			switch (c.getType(i)) {
-				case Cursor.FIELD_TYPE_BLOB: map.put(columnNames[i], c.getBlob(i)); break;
-				case Cursor.FIELD_TYPE_FLOAT: map.put(columnNames[i], c.getDouble(i)); break;
-				case Cursor.FIELD_TYPE_INTEGER: map.put(columnNames[i], c.getLong(i)); break;
+			switch (cursor.getType(i)) {
+				case Cursor.FIELD_TYPE_BLOB: map.put(columnNames[i], cursor.getBlob(i)); break;
+				case Cursor.FIELD_TYPE_FLOAT: map.put(columnNames[i], cursor.getDouble(i)); break;
+				case Cursor.FIELD_TYPE_INTEGER: map.put(columnNames[i], cursor.getLong(i)); break;
 				case Cursor.FIELD_TYPE_NULL: break;
-				case Cursor.FIELD_TYPE_STRING: map.put(columnNames[i], c.getString(i)); break;
+				case Cursor.FIELD_TYPE_STRING: map.put(columnNames[i], cursor.getString(i)); break;
 			}
 		}
-		if (!c.moveToNext()) {
-			c.close();
+		if (!cursor.moveToNext()) {
+			cursor.close();
 			// TODO: what if iterator doesnt run fully?
 		}
 		return map;
