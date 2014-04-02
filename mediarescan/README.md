@@ -8,3 +8,8 @@ app for that stopped working lately.
 
 	http://stackoverflow.com/questions/21469431/permission-denial-not-allowed-to-send-broadcast-in-android
 
+Implementation
+==============
+
+	https://github.com/jerickson314/sdscanner
+
