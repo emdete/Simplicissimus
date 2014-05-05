@@ -1,0 +1,24 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.9.+'
+	}
+}
+
+apply plugin: 'android'
+
+dependencies {
+	compile files('libraries/json-simple-1.1.1.jar')
+}
+
+android {
+	compileSdkVersion 19
+	buildToolsVersion "19.0.2"
+	android {
+		lintOptions {
+			abortOnError false
+		}
+	}
+}
