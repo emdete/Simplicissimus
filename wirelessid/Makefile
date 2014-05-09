@@ -1,17 +1,16 @@
+.PHONY: all run dbg clean gradle
+
 all:
-	ANDROID_HOME=/usr/local/android/sdk \
-	./gradlew -q assemble
+	./gradlew -q assembleRelease
 
 run:
-	ANDROID_HOME=/usr/local/android/sdk \
-	./gradlew -q build
+	./gradlew -q assembleDebug
 
 dbg: run
 	#adb uninstall org.pyneo.android.gui
 	adb install -r build/apk/*-debug-unaligned.apk
-	adb shell am start org.pyneo.android.gui/.SingleButtonTester
+	adb shell am start org.pyneo.android.gui/.Sample
 
 clean:
-	ANDROID_HOME=/usr/local/android/sdk \
 	./gradlew -q clean
 

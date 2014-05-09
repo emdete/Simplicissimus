@@ -9,8 +9,8 @@ import android.widget.Button;
 
 import org.pyneo.android.wirelessid.Meta;
 
-public class SingleButtonTester extends Activity {
-	static final String TAG = SingleButtonTester.class.getName();
+public class Sample extends Activity {
+	static final String TAG = Sample.class.getName();
 	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 

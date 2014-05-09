@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
@@ -17,9 +18,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class Sample extends FragmentActivity {
+	static final String TAG = Sample.class.getName();
+	static boolean DEBUG = true;
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity);
+		setContentView(R.layout.main);
 		final FragmentStatePagerAdapter mDemoCollectionPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 			@Override
 			public Fragment getItem(int i) {
