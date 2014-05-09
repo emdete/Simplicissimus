@@ -1,19 +1,3 @@
-/*
- * Copyright 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *	 http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.pyneo.android.gui;
 
 import android.app.ActionBar;
@@ -31,34 +15,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import org.pyneo.android.gui.R;
 
-public class CollectionDemoActivity extends FragmentActivity {
-
-
-	ViewPager mViewPager;
-
+public class Sample extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_collection_demo);
+		setContentView(R.layout.activity);
+		final FragmentStatePagerAdapter mDemoCollectionPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+			@Override
+			public Fragment getItem(int i) {
+				Fragment fragment = new DemoObjectFragment();
+				Bundle args = new Bundle();
+				args.putInt("no", i + 1);
+				fragment.setArguments(args);
+				return fragment;
+			}
 
-		// Create an adapter that when requested, will return a fragment representing an object in
-		// the collection.
-		// 
-		// ViewPager and its adapters use support library fragments, so we must use
-		// getSupportFragmentManager.
-	DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
-		mDemoCollectionPagerAdapter = new DemoCollectionPagerAdapter(getSupportFragmentManager());
+			@Override
+			public int getCount() {
+				return 10;
+			}
 
-		// Set up action bar.
+			@Override
+			public CharSequence getPageTitle(int position) {
+				return "Tab " + (position + 1);
+			}
+		};
 		final ActionBar actionBar = getActionBar();
-
-		// Specify that the Home button should show an "Up" caret, indicating that touching the
-		// button will take the user one step up in the application's hierarchy.
 		actionBar.setDisplayHomeAsUpEnabled(true);
-
-		// Set up the ViewPager, attaching the adapter.
-		mViewPager = (ViewPager) findViewById(R.id.pager);
+		final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mDemoCollectionPagerAdapter);
 	}
 
@@ -66,7 +50,7 @@ public class CollectionDemoActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				Intent upIntent = new Intent(this, MainActivity.class);
+				Intent upIntent = new Intent(this, Sample.class);
 				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 					TaskStackBuilder.from(this).addNextIntent(upIntent).startActivities();
 					finish();
@@ -78,43 +62,12 @@ public class CollectionDemoActivity extends FragmentActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public static class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
-
-		public DemoCollectionPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int i) {
-			Fragment fragment = new DemoObjectFragment();
-			Bundle args = new Bundle();
-			args.putInt(DemoObjectFragment.ARG_OBJECT, i + 1);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		@Override
-		public int getCount() {
-			// For this contrived example, we have a 100-object collection.
-			return 100;
-		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			return "OBJECT " + (position + 1);
-		}
-	}
-
 	public static class DemoObjectFragment extends Fragment {
-
-		public static final String ARG_OBJECT = "object";
-
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment, container, false);
 			Bundle args = getArguments();
-			((TextView) rootView.findViewById(android.R.id.text1)).setText(Integer.toString(args.getInt(ARG_OBJECT)));
+			((TextView)rootView.findViewById(android.R.id.text1)).setText(Integer.toString(args.getInt("no") * 2 + 1));
 			return rootView;
 		}
 	}

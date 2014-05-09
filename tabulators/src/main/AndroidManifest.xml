@@ -3,7 +3,7 @@
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 
 	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
-		<activity android:label="Sample" android:name=".CollectionDemoActivity" >
+		<activity android:label="Sample" android:name=".Sample" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
