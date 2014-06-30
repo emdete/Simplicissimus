@@ -14,3 +14,6 @@ dbg: run
 clean:
 	./gradlew -q clean
 
+d:
+	meld src/main/java/org/pyneo/android/wirelessid ../../proprorep/src/main/java/org/pyneo/android/wirelessid
+	meld src/main/java/org/pyneo/android/wirelessid ../../pyneo-wirelesslocation/src/org/pyneo/android/wirelessid

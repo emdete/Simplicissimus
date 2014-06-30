@@ -115,10 +115,10 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 		if (value != null) {
 			map.put("type", "2");
 			int i;
-			i = value.getCid(); if (i != Integer.MAX_VALUE) map.put("cid", i);
-			i = value.getLac(); if (i != Integer.MAX_VALUE) map.put("lac", i);
-			i = value.getMcc(); if (i != Integer.MAX_VALUE) map.put("mcc", i);
-			i = value.getMnc(); if (i != Integer.MAX_VALUE) map.put("mnc", i);
+			i = value.getMcc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mcc", i);
+			i = value.getMnc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mnc", i);
+			i = value.getLac(); if (i != Integer.MAX_VALUE && i > 0) map.put("lac", i);
+			i = value.getCid(); if (i != Integer.MAX_VALUE && i > 0) map.put("cid", i);
 			//map.put("psc", value.getPsc()); // depricated
 		}
 	}
@@ -128,11 +128,11 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 		if (value != null) {
 			map.put("type", "3");
 			int i;
-			i = value.getMcc(); if (i != Integer.MAX_VALUE) map.put("mcc", i);
-			i = value.getMnc(); if (i != Integer.MAX_VALUE) map.put("mnc", i);
-			i = value.getLac(); if (i != Integer.MAX_VALUE) map.put("lac", i);
-			i = value.getPsc(); if (i != Integer.MAX_VALUE) map.put("psc", i);
-			i = value.getCid(); if (i != Integer.MAX_VALUE) {
+			i = value.getMcc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mcc", i);
+			i = value.getMnc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mnc", i);
+			i = value.getLac(); if (i != Integer.MAX_VALUE && i > 0) map.put("lac", i);
+			i = value.getPsc(); if (i != Integer.MAX_VALUE && i > 0) map.put("psc", i);
+			i = value.getCid(); if (i != Integer.MAX_VALUE && i > 0) {
 				if (i >= 0x10000) {
 					map.put("rncid", i / 0x10000);
 					i %= 0x10000;
@@ -146,17 +146,18 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 		if (value != null) {
 			map.put("type", "4");
 			int i;
-			i = value.getCi(); if (i != Integer.MAX_VALUE) map.put("ci", i);
-			i = value.getMcc(); if (i != Integer.MAX_VALUE) map.put("mcc", i);
-			i = value.getMnc(); if (i != Integer.MAX_VALUE) map.put("mnc", i);
-			i = value.getPci(); if (i != Integer.MAX_VALUE) map.put("pci", i);
-			i = value.getTac(); if (i != Integer.MAX_VALUE) map.put("tac", i);
+			i = value.getMcc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mcc", i);
+			i = value.getMnc(); if (i != Integer.MAX_VALUE && i > 0 && i < 1000) map.put("mnc", i);
+			i = value.getTac(); if (i != Integer.MAX_VALUE && i > 0) map.put("tac", i);
+			i = value.getPci(); if (i != Integer.MAX_VALUE && i > 0) map.put("pci", i);
+			i = value.getCi(); if (i != Integer.MAX_VALUE && i > 0) map.put("ci", i);
 		}
 	}
 
 	public static void fill(TheDictionary map, CellSignalStrengthCdma value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
@@ -164,7 +165,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 
 	public static void fill(TheDictionary map, CellSignalStrengthGsm value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
@@ -173,7 +175,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	public static void fill(TheDictionary map, CellSignalStrengthWcdma value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
@@ -181,8 +184,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 
 	public static void fill(TheDictionary map, CellSignalStrengthLte value) throws Exception {
 		if (value != null) {
-			map.put("timing_advance", value.getTimingAdvance());
 			int i;
+			i = value.getTimingAdvance(); if (i != Integer.MAX_VALUE) map.put("timing_advance", i);
 			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
