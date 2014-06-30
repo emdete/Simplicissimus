@@ -24,7 +24,8 @@ public class Sample extends FragmentActivity {
 
 	public static class ObjectFragment extends Fragment {
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+			Log.d(TAG, "onCreateView: bundle=" + bundle);
 			Bundle args = getArguments();
 			int position = args.getInt(POSITION);
 			Log.d(TAG, "onCreateView: position=" + position);
@@ -34,9 +35,9 @@ public class Sample extends FragmentActivity {
 		}
 	}
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Log.d(TAG, "onCreate:");
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		Log.d(TAG, "onCreate: bundle=" + bundle);
 		setContentView(R.layout.main);
 		final FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 			@Override
