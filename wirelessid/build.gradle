@@ -17,13 +17,14 @@ android {
 		}
 	}
 }
+
 dependencies {
 	compile files('libraries/json-simple-1.1.1.jar')
 }
 
 android {
 	compileSdkVersion 19
-	buildToolsVersion "19.0.3"
+	buildToolsVersion "20.0.0"
 	android {
 		lintOptions {
 			abortOnError false
