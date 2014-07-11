@@ -3,12 +3,14 @@ It's Down
 
 Android learning code.
 
-The sub-projects do nothing special or secret, all stuff probably is avaiable
-at google in a better or nice shape. But i don't like these examples as they
+The sub-projects do nothing special or secret, all stuff probably is available
+at google in a better or nicer shape. But i don't like these examples as they
 mix alot of stuff. Goal of this collection is to concentrate on the topic. An
-app that reads contacts just reads contacts, there is no gui, nothing. The only
-feature that is used on top if the topic is androids logging. So if the
-contacts are read they will be written to the log and read by logcat.
+app that reads contacts just reads contacts, there is no gui, nothing (you get
+a full-screen button to start reading). I don't even use string replacement in
+resources and resolution dependend icons. The only feature that is used on top
+if the topic is androids logging. So if the contacts are read they will be
+written to the log and read by logcat.
 
 The sub-projects play around with some Android features:
 
@@ -36,9 +38,9 @@ The sub-projects play around with some Android features:
 
  - read wireless ids
 
-and more will added.
+and more will added as i start solving a new problem.
 
-with all projects
+with all projects i try to
 
  - learning to use gradle
 
