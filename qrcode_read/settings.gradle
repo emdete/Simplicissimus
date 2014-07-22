@@ -1,0 +1,2 @@
+include ':libraries:zxing'
+include ':libraries:zxing-android-integration'
