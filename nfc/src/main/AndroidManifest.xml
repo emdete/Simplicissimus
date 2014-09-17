@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
+	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
+	<uses-feature android:name="android.hardware.nfc" android:required="true" />
+	<uses-permission android:name="android.permission.NFC" />
+	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
+		<activity android:label="Sample" android:name="Sample" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<data
+					android:mimeType="text/plain"
+					android:scheme="http"
+					android:host="developer.android.com"
+					android:pathPrefix="/index.html"
+					/>
+			</intent-filter>
+		</activity>
+	</application>
+</manifest>
