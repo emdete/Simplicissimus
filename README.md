@@ -52,9 +52,7 @@ and more will added as i start solving a new problem.
 
 With all projects i try to
 
- - learning to use gradle
-
- - learning to use gradle in a multi-library/app project
+ - learn to use gradle (and use gradle in a multi-library/app project)
 
  - minimize code
 
