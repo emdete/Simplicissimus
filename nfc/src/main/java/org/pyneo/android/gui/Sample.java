@@ -27,6 +27,7 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 	static final String TAG = Sample.class.getName();
 	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	static final String text = "xmpp://mdt@emdete.de";
 
 	Context context;
 	NfcAdapter nfcAdapter;
@@ -68,20 +69,27 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		if (DEBUG) Log.d(TAG, "onCreate nfcAdapter=" + nfcAdapter);
 		if (nfcAdapter != null) {
 			if (nfcAdapter.isEnabled() || nfcAdapter.isNdefPushEnabled()) {
+				// only if nfc and nde/beam is enabled we can proceed
 				button.setText("NFC and NDE available");
 				nfcAdapter.setNdefPushMessageCallback(this, this);
-				if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-					processIntent(getIntent());
+				Intent intent = getIntent();
+				// this is the moment where we actually notice that we received a beam event:
+				if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+					Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+					NdefMessage msg = (NdefMessage)rawMsgs[0];
+					button.setText(new String(msg.getRecords()[0].getPayload()));
 				}
 			}
 			else {
+				// if either is swithed off ask the user to turn it on, it may
+				// well be that we land here without any nfc in the device
 				button.setText(nfcAdapter.isEnabled() ?
-					"NFC and NDE not enabled" :
-					"NDE not enabled");
+					"NFC and Beam not enabled" :
+					"Beam not enabled");
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(nfcAdapter.isEnabled() ?
-					"For this operation you need NFC and NDE which is currently disabled, you have to enable it in the settings." :
-					"For this operation you need NDE which is currently disabled, you have to enable it in the settings."
+					"For this operation you need NFC and Beam which is currently disabled, you have to enable it in the settings." :
+					"For this operation you need Beam which is currently disabled, you have to enable it in the settings."
 					);
 				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialogInterface, int i) {
@@ -96,6 +104,7 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 			}
 		}
 		else {
+			// devices without any nfc capability often just return null
 			button.setText("NFC not available");
 		}
 	}
@@ -120,7 +129,6 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 
 	@Override
 	public NdefMessage createNdefMessage(NfcEvent event) {
-		String text = ("Beam me up, Android!\n\n" + "Beam Time: " + System.currentTimeMillis());
 		NdefMessage msg = new NdefMessage(new NdefRecord[] { NdefRecord.createMime(
 			"application/vnd.com.example.android.beam", text.getBytes()),
 			// The Android Application Record (AAR) is commented out. When a
@@ -139,15 +147,8 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		setIntent(intent);
 	}
 
-	void processIntent(Intent intent) {
-		Button button = (Button)findViewById(R.id.button);
-		Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-		NdefMessage msg = (NdefMessage) rawMsgs[0];
-		button.setText(new String(msg.getRecords()[0].getPayload()));
-	}
-
 	public void doTest(Context context) {
 		Button button = (Button)findViewById(R.id.button);
-		button.setText("Started");
+		button.setText(text);
 	}
 }
