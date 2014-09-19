@@ -34,7 +34,7 @@ public class Sample extends Activity {
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 	static final QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 	static final int QR_CODE_SIZE = 1000;
-	static final private String protocol = "foobar";
+	static final private String protocol = "xmpp";
 
 	Context context;
 	Button share;
@@ -168,7 +168,7 @@ public class Sample extends Activity {
 	}
 
 	public void doShare(Context context) {
-		String data = protocol + "://blalala";
+		String data = protocol + "://mdt@emdete.de";
 		imageView.setImageBitmap(getQRCodeBitmap(data, QR_CODE_SIZE));
 		imageView.setBackgroundColor(Color.rgb(100, 100, 50));
 		share.setText(data);
