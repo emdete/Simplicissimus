@@ -13,6 +13,8 @@ import android.widget.Button;
 
 public class Sample extends Activity {
 	static final String TAG = Sample.class.getName();
+	static boolean DEBUG = true;
+	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	Context context;
 	ServiceConnection serviceConnection;
@@ -21,7 +23,7 @@ public class Sample extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(TAG, "onCreate");
+		if (DEBUG) Log.d(TAG, "onCreate");
 		setContentView(R.layout.main);
 		context = getBaseContext();
 		Button button = (Button)findViewById(R.id.button);
@@ -37,54 +39,54 @@ public class Sample extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Log.d(TAG, "onStart");
+		if (DEBUG) Log.d(TAG, "onStart");
 	}
 
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		Log.d(TAG, "onRestart");
+		if (DEBUG) Log.d(TAG, "onRestart");
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(TAG, "onResume");
+		if (DEBUG) Log.d(TAG, "onResume");
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.d(TAG, "onPause");
+		if (DEBUG) Log.d(TAG, "onPause");
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Log.d(TAG, "onStop");
+		if (DEBUG) Log.d(TAG, "onStop");
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		Log.d(TAG, "onDestroy");
+		if (DEBUG) Log.d(TAG, "onDestroy");
 		if (serviceConnection != null) {
 			unbindService(serviceConnection);
 		}
 	}
 
 	void onServiceConnected(ComponentName name, IBinder service) {
-		Log.d(TAG, "onServiceConnected: name=" + name + ", service=" + service);
+		if (DEBUG) Log.d(TAG, "onServiceConnected: name=" + name + ", service=" + service);
 		binder = (BackgroundService.BackgroundBinder)service;
 	}
 
 	void onServiceDisconnected(ComponentName name) {
-		Log.d(TAG, "onServiceDisconnected: name=" + name);
+		if (DEBUG) Log.d(TAG, "onServiceDisconnected: name=" + name);
 		binder = null;
 	}
 
 	void onClick(View view) {
-		Log.d(TAG, "onClick");
+		if (DEBUG) Log.d(TAG, "onClick");
 		Button button = (Button)findViewById(R.id.button);
 		if (false) {
 			startService(new Intent(this, BackgroundService.class));
