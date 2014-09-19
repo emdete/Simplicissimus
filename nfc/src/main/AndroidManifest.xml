@@ -12,7 +12,7 @@
 			<intent-filter>
 				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
 				<category android:name="android.intent.category.DEFAULT"/>
-				<data android:mimeType="application/vnd.com.example.android.beam"/>
+				<data android:mimeType="application/vnd.org.pyneo.android.sample"/>
 			</intent-filter>
 		</activity>
 	</application>
