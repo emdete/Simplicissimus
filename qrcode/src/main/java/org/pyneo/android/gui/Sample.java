@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -168,7 +166,7 @@ public class Sample extends Activity {
 	}
 
 	public void doShare(Context context) {
-		String data = protocol + "://mdt@emdete.de";
+		String data = protocol + ":mdt@emdete.de";
 		imageView.setImageBitmap(getQRCodeBitmap(data, QR_CODE_SIZE));
 		imageView.setBackgroundColor(Color.rgb(100, 100, 50));
 		share.setText(data);
