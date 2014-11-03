@@ -130,7 +130,7 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 	@Override
 	public NdefMessage createNdefMessage(NfcEvent event) {
 		NdefMessage msg = new NdefMessage(new NdefRecord[] { NdefRecord.createMime(
-			"application/vnd.com.example.android.beam", text.getBytes()),
+			"application/vnd.org.pyneo.android.sample", text.getBytes()),
 			// The Android Application Record (AAR) is commented out. When a
 			// device receives a push with an AAR in it, the application
 			// specified in the AAR is guaranteed to run. The AAR overrides the
