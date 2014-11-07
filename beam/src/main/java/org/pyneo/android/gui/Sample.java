@@ -1,5 +1,7 @@
 package org.pyneo.android.gui;
 
+import android.net.Uri;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +13,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
@@ -21,13 +23,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 public class Sample extends Activity implements CreateNdefMessageCallback {
 	// see https://developer.android.com/guide/topics/connectivity/nfc/nfc.html#p2p
 	static final String TAG = Sample.class.getName();
 	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
-	static final String text = "xmpp://mdt@emdete.de";
+	static final String uri = "xmpp://mdt@emdete.de";
 
 	Context context;
 	NfcAdapter nfcAdapter;
@@ -39,13 +42,6 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		setContentView(R.layout.main);
 		context = getBaseContext();
 		Button button = (Button)findViewById(R.id.button);
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (DEBUG) Log.d(TAG, "onClick");
-				doTest(context);
-			}
-		});
 	}
 
 	@Override
@@ -60,6 +56,11 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		if (DEBUG) Log.d(TAG, "onRestart");
 	}
 
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	Uri getJellyBean(NdefRecord record) {
+		return record.toUri();
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -68,16 +69,53 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		if (DEBUG) Log.d(TAG, "onCreate nfcAdapter=" + nfcAdapter);
 		if (nfcAdapter != null) {
-			if (nfcAdapter.isEnabled() || nfcAdapter.isNdefPushEnabled()) {
+			if (nfcAdapter.isEnabled() && nfcAdapter.isNdefPushEnabled()) {
 				// only if nfc and nde/beam is enabled we can proceed
 				button.setText("NFC and NDE available");
 				nfcAdapter.setNdefPushMessageCallback(this, this);
 				Intent intent = getIntent();
 				// this is the moment where we actually notice that we received a beam event:
 				if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-					Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-					NdefMessage msg = (NdefMessage)rawMsgs[0];
-					button.setText(new String(msg.getRecords()[0].getPayload()));
+					Uri uri = Uri.parse("");
+					for (Parcelable message : getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
+						if (message instanceof NdefMessage) {
+							for (NdefRecord record : ((NdefMessage)message).getRecords()) {
+								switch (record.getTnf()) {
+									case NdefRecord.TNF_WELL_KNOWN: {
+										Log.d(TAG, "use TNF_MIME_MEDIA");
+										if (Arrays.equals(record.getType(), NdefRecord.RTD_URI)) {
+											if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+												uri = getJellyBean(record);
+											} else {
+												byte[] payload = record.getPayload();
+												if (payload[0] == 0) {
+													uri = Uri.parse(new String(Arrays.copyOfRange(
+															payload, 1, payload.length)));
+												}
+											}
+										}
+										else {
+											Log.d(TAG, "ignored by Type record=" + record);
+										}
+										break;
+									}
+									case NdefRecord.TNF_MIME_MEDIA: {
+										Log.d(TAG, "use TNF_MIME_MEDIA");
+										uri = Uri.parse(new String(record.getPayload()));
+										break;
+									}
+									default: {
+										Log.d(TAG, "ignored by Tnf record=" + record);
+										break;
+									}
+								}
+							}
+						}
+						else {
+							Log.e(TAG, "ignored by class message=" + message);
+						}
+					}
+					button.setText(uri.toString());
 				}
 			}
 			else {
@@ -93,7 +131,7 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 					);
 				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialogInterface, int i) {
-						startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+						startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
 					}
 				});
 				builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -129,15 +167,10 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 
 	@Override
 	public NdefMessage createNdefMessage(NfcEvent event) {
-		NdefMessage msg = new NdefMessage(new NdefRecord[] { NdefRecord.createMime(
-			"application/vnd.org.pyneo.android.sample", text.getBytes()),
-			// The Android Application Record (AAR) is commented out. When a
-			// device receives a push with an AAR in it, the application
-			// specified in the AAR is guaranteed to run. The AAR overrides the
-			// tag dispatch system. You can add it back in to guarantee that
-			// this activity starts when receiving a beamed message. For now,
-			// this code uses the tag dispatch system.
-			//NdefRecord.createApplicationRecord("com.example.android.beam"),
+		NdefMessage msg = new NdefMessage(new NdefRecord[] {
+			NdefRecord.createMime("application/vnd.org.pyneo.android.sample", uri.getBytes()),
+			NdefRecord.createUri(uri),
+			NdefRecord.createApplicationRecord("org.pyneo.android.gui"),
 			});
 		return msg;
 	}
@@ -145,10 +178,5 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 	@Override
 	public void onNewIntent(Intent intent) {
 		setIntent(intent);
-	}
-
-	public void doTest(Context context) {
-		Button button = (Button)findViewById(R.id.button);
-		button.setText(text);
 	}
 }
