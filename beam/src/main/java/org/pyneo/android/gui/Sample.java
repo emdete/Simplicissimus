@@ -71,7 +71,7 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 		if (nfcAdapter != null) {
 			if (nfcAdapter.isEnabled() && nfcAdapter.isNdefPushEnabled()) {
 				// only if nfc and nde/beam is enabled we can proceed
-				button.setText("NFC and NDE available");
+				button.setText("NFC and Beam available");
 				nfcAdapter.setNdefPushMessageCallback(this, this);
 				Intent intent = getIntent();
 				// this is the moment where we actually notice that we received a beam event:
@@ -84,10 +84,12 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 									case NdefRecord.TNF_WELL_KNOWN: {
 										Log.d(TAG, "use TNF_MIME_MEDIA");
 										if (Arrays.equals(record.getType(), NdefRecord.RTD_URI)) {
+											Log.d(TAG, "use RTD_URI");
 											if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 												uri = getJellyBean(record);
 											} else {
 												byte[] payload = record.getPayload();
+// see https://github.com/android/platform_frameworks_base/blob/master/core/java/android/nfc/NdefRecord.java#L713
 												if (payload[0] == 0) {
 													uri = Uri.parse(new String(Arrays.copyOfRange(
 															payload, 1, payload.length)));
@@ -122,12 +124,15 @@ public class Sample extends Activity implements CreateNdefMessageCallback {
 				// if either is swithed off ask the user to turn it on, it may
 				// well be that we land here without any nfc in the device
 				button.setText(nfcAdapter.isEnabled() ?
-					"NFC and Beam not enabled" :
-					"Beam not enabled");
+					"Beam not enabled"
+					:
+					"NFC and Beam not enabled"
+					);
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(nfcAdapter.isEnabled() ?
-					"For this operation you need NFC and Beam which is currently disabled, you have to enable it in the settings." :
 					"For this operation you need Beam which is currently disabled, you have to enable it in the settings."
+					:
+					"For this operation you need NFC and Beam which is currently disabled, you have to enable it in the settings."
 					);
 				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialogInterface, int i) {
