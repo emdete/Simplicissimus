@@ -1,5 +1,6 @@
 package org.pyneo.android.gui;
 
+import org.pyneo.android.cam.UnattendedPic;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -59,120 +60,11 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Sample extends Activity {
-	private static class ImageSaver implements Runnable {
-		private final Image mImage;
-		private final File mFile;
-		public ImageSaver(Image image, File file) {
-			Log.d(TAG, "ImageSaver");
-			mImage = image;
-			mFile = file;
-		}
-		@Override
-		public void run() {
-			Log.d(TAG, "ImageSaver.run");
-			try {
-				ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-				byte[] bytes = new byte[buffer.remaining()];
-				buffer.get(bytes);
-				FileOutputStream output = new FileOutputStream(mFile);
-				try {
-					output.write(bytes);
-					Log.d(TAG, "ImageSaver.run mFile=" + mFile);
-				}
-				finally {
-					output.close();
-				}
-			}
-			catch (Exception e) {
-				Log.e(TAG, "caught an exception", e);
-			}
-			finally {
-				mImage.close();
-			}
-		}
-	}
-
 	private static final String TAG = Sample.class.getName();
 	private static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 	private Context context;
-	private HandlerThread mBackgroundThread;
-	private Handler mBackgroundHandler;
-	private ImageReader mImageReader;
-	private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
-		@Override
-		public void onImageAvailable(ImageReader reader) {
-			Log.d(TAG, "onImageAvailable");
-			mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
-		}
-
-	};
-	private CameraDevice mCameraDevice;
-	private Semaphore mCameraOpenCloseLock = new Semaphore(1);
-	private CameraCaptureSession mCaptureSession;
-	private CaptureRequest.Builder captureBuilder;
-	private CameraCaptureSession.CaptureCallback captureCallback;
-	private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
-		@Override
-		public void onOpened(CameraDevice cameraDevice) {
-			Log.d(TAG, "onOpened");
-			mCameraOpenCloseLock.release();
-			mCameraDevice = cameraDevice;
-			try {
-				captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-				Surface surface = mImageReader.getSurface();
-				captureBuilder.addTarget(surface);
-				captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-				captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
-				mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
-					@Override
-					public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-						Log.d(TAG, "onConfigured");
-						if (null == mCameraDevice) {
-							return;
-						}
-						mCaptureSession = cameraCaptureSession;
-						captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-						captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-						captureCallback = new CameraCaptureSession.CaptureCallback() {
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-								Log.d(TAG, "onCaptureCompleted");
-							}
-						};
-						Log.d(TAG, "onConfigured: capture!");
-						try {
-							mCaptureSession.capture(captureBuilder.build(), captureCallback, null);
-						} catch (Exception e) {
-							Log.e(TAG, "caught an exception", e);
-						}
-					}
-					@Override
-					public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-						Log.i(TAG, "onConfigureFailed");
-					}
-				}, null);
-			} catch (Exception e) {
-				Log.e(TAG, "caught an exception", e);
-			}
-		}
-		@Override
-		public void onDisconnected(CameraDevice cameraDevice) {
-			Log.d(TAG, "onDisconnected");
-			mCameraOpenCloseLock.release();
-			cameraDevice.close();
-			mCameraDevice = null;
-		}
-		@Override
-		public void onError(CameraDevice cameraDevice, int error) {
-			Log.d(TAG, "onError error=" + error);
-			mCameraOpenCloseLock.release();
-			cameraDevice.close();
-			mCameraDevice = null;
-		}
-	};
-	private File mFile;
+	private UnattendedPic unattendedPic = new UnattendedPic();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -206,45 +98,13 @@ public class Sample extends Activity {
 	protected void onResume() {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "onResume");
-		mBackgroundThread = new HandlerThread("CameraBackground");
-		mBackgroundThread.start();
-		mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-		mFile = new File("/sdcard", "pic.jpg");
+		unattendedPic.start(this);
 	}
 
 	@Override
 	protected void onPause() {
 		if (DEBUG) Log.d(TAG, "onPause");
-		try {
-			mCameraOpenCloseLock.acquire();
-			if (null != mCaptureSession) {
-				mCaptureSession.close();
-				if (DEBUG) Log.d(TAG, "onPause: mCaptureSession.close");
-				mCaptureSession = null;
-			}
-			if (null != mCameraDevice) {
-				mCameraDevice.close();
-				if (DEBUG) Log.d(TAG, "onPause: mCameraDevice.close");
-				mCameraDevice = null;
-			}
-			if (null != mImageReader) {
-				mImageReader.close();
-				if (DEBUG) Log.d(TAG, "onPause: mImageReader.close");
-				mImageReader = null;
-			}
-		} catch (InterruptedException e) {
-			Log.e(TAG, "caught an exception", e);
-		} finally {
-			mCameraOpenCloseLock.release();
-		}
-		try {
-			mBackgroundThread.join();
-			if (DEBUG) Log.d(TAG, "onPause: mBackgroundThread.join");
-			mBackgroundThread = null;
-			mBackgroundHandler = null;
-		} catch (InterruptedException e) {
-			Log.e(TAG, "caught an exception", e);
-		}
+		unattendedPic.stop();
 		super.onPause();
 	}
 
@@ -262,42 +122,7 @@ public class Sample extends Activity {
 
 	public void doTest(Context context) {
 		if (DEBUG) Log.d(TAG, "doTest");
-		if (mImageReader == null) {
-			try {
-				CameraManager manager = (CameraManager)this.getSystemService(Context.CAMERA_SERVICE);
-				for (String cameraId: manager.getCameraIdList()) {
-					if (DEBUG) Log.d(TAG, "doTest cameraId=" + cameraId);
-					CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-					if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
-						for (Key<?> key: characteristics.getKeys()) {
-							if (DEBUG) Log.d(TAG, "doTest key=" + key.getName() + ", value=" + characteristics.get(key));
-						}
-						if (DEBUG) Log.d(TAG, "doTest characteristics=" + characteristics);
-						StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-						if (DEBUG) Log.d(TAG, "doTest map=" + map);
-						for (Object o: map.getOutputSizes(ImageFormat.JPEG)) {
-							if (DEBUG) Log.d(TAG, "doTest o=" + o);
-						}
-						mImageReader = ImageReader.newInstance(800, 600, ImageFormat.JPEG, 2);
-						mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
-						manager.openCamera(cameraId, mStateCallback, mBackgroundHandler);
-						break; // go on in onOpened, it's async
-					}
-				}
-				((Button)findViewById(R.id.button)).setText("Camera");
-			}
-			catch (CameraAccessException e) {
-				((Button)findViewById(R.id.button)).setText("Error");
-				Log.e(TAG, "caught exception", e);
-			}
-		}
-		else {
-			Log.d(TAG, "doTest: capture!");
-			try {
-				mCaptureSession.capture(captureBuilder.build(), captureCallback, null);
-			} catch (Exception e) {
-				Log.e(TAG, "caught an exception", e);
-			}
-		}
+		unattendedPic.capture(this);
+		((Button)findViewById(R.id.button)).setText("Triggered");
 	}
 }
