@@ -1,0 +1,43 @@
+buildscript {
+	repositories {
+        jcenter()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:1.1.+'
+	}
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+    jcenter()
+}
+
+apply from: "../../pyneo.org.gradle"
+android {
+	signingConfigs {
+		release {
+			storeFile file("../../pyneo.org.keystore")
+		}
+	}
+}
+
+dependencies {
+    // compile "com.android.support:support-v4:21.0.2"
+    // compile "com.android.support:support-v13:21.0.2"
+    // compile "com.android.support:cardview-v7:21.0.2"
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
+	defaultConfig {
+		minSdkVersion 21
+		targetSdkVersion 21
+	}
+	android {
+		lintOptions {
+			abortOnError false
+		}
+	}
+}
