@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
-	<uses-sdk android:minSdkVersion="11" android:targetSdkVersion="19" />
 	<uses-feature android:name="android.hardware.consumerir" android:required="true"/>
 	<uses-permission android:name="android.permission.TRANSMIT_IR" />
 	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >

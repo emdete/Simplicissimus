@@ -50,13 +50,27 @@ public class Sample extends Activity {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "onResume");
 		irManager = (ConsumerIrManager)getSystemService(CONSUMER_IR_SERVICE);
-		Log.d(TAG, "hasIrEmitter=" + irManager.hasIrEmitter());
-		CarrierFrequencyRange[]	ranges = irManager.getCarrierFrequencies();
-		for (CarrierFrequencyRange range: ranges) {
-			Log.d(TAG, "range"
-				+ ", max=" + range.getMaxFrequency()
-				+ ", min=" + range.getMinFrequency()
-				);
+		boolean hasIrEmitter = irManager.hasIrEmitter();
+		Log.d(TAG, "hasIrEmitter=" + hasIrEmitter);
+		if (hasIrEmitter) {
+			CarrierFrequencyRange[]	ranges = irManager.getCarrierFrequencies();
+			for (CarrierFrequencyRange range: ranges) {
+				Log.d(TAG, "range"
+					+ ", max=" + range.getMaxFrequency()
+					+ ", min=" + range.getMinFrequency()
+					);
+			}
+		}
+		else {
+			irManager = null;
+			Button button = (Button)findViewById(R.id.button);
+			button.setText("No IrEmitter");
+			try {
+				Object c = Class.forName("com.lge.hardware.IRBlaster.IRBlaster");
+			}
+			catch (Exception e) {
+				button.setText(e.toString());
+			}
 		}
 	}
 
@@ -80,7 +94,9 @@ public class Sample extends Activity {
 
 	public void doTest(Context context) {
 		Button button = (Button)findViewById(R.id.button);
-		irManager.transmit(120, new int[]{1000});
-		button.setText("Started");
+		if (irManager != null) {
+			irManager.transmit(120, new int[]{1000});
+			button.setText("Sent");
+		}
 	}
 }
