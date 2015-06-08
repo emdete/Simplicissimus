@@ -11,6 +11,7 @@ public class Sample
 		extends Activity {
 	static final String  TAG   = Sample.class.getName();
 	static       boolean DEBUG = true;
+	View optionsContainer;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	Context context;
@@ -32,19 +33,21 @@ public class Sample
 		//		});
 
 		View commandButton = findViewById(R.id.button3);
-		final View optionsContainer = findViewById(R.id.options);
+		optionsContainer = findViewById(R.id.options);
 		if (commandButton != null && optionsContainer != null) {
 			commandButton.setOnClickListener(new View.OnClickListener() {
 
 				@Override public void onClick (View v) {
-					int containerVisibility = optionsContainer.getVisibility();
-					int newVisibilityState = containerVisibility == View.INVISIBLE ?
-							View.VISIBLE :
-							View.INVISIBLE;
-					optionsContainer.setVisibility(newVisibilityState);
+					toggle();
 				}
 			});
 		}
+	}
+
+	void toggle() {
+		int containerVisibility = optionsContainer.getVisibility();
+		int newVisibilityState = containerVisibility == View.INVISIBLE? View.VISIBLE: View.INVISIBLE;
+		optionsContainer.setVisibility(newVisibilityState);
 	}
 
 	@Override protected void onStart () {

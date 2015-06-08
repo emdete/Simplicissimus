@@ -1,52 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-
     <ImageButton
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="centerInside"
-        android:background="@null"
-        android:layout_weight="1"
-        android:src="@drawable/ic_action_zoom_in"/>
-
+        style="@style/buttonstyle"
+        android:src="@drawable/ic_action_zoom_in"
+        />
     <ImageButton
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:layout_weight="1"
-        android:src="@drawable/ic_action_zoom_out"/>
-
+        style="@style/buttonstyle"
+        android:src="@drawable/ic_action_zoom_out"
+        />
     <ImageButton
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:layout_weight="1"
-        android:src="@drawable/attribute"/>
-
-
+        style="@style/buttonstyle"
+        android:src="@drawable/attribute"
+        />
     <ImageButton
         android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:layout_weight="1"
-        android:scaleType="centerInside"
+        style="@style/buttonstyle"
         android:src="@drawable/ic_action_overlays"
-        android:visibility="invisible"/>
-
+        />
     <ImageButton
         android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:layout_weight="1"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_action_autofollow"/>
-
+        style="@style/buttonstyle"
+        android:src="@drawable/ic_action_autofollow"
+        />
 </merge>
