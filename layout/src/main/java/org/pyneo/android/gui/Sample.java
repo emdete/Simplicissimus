@@ -9,8 +9,8 @@ import android.widget.Button;
 
 public class Sample
 		extends Activity {
-	static final String  TAG   = Sample.class.getName();
-	static       boolean DEBUG = true;
+	static final String TAG = Sample.class.getName();
+	static boolean DEBUG = true;
 	View optionsContainer;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
