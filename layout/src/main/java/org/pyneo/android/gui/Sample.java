@@ -1,20 +1,22 @@
 package org.pyneo.android.gui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 public class Sample
 		extends Activity {
-	static final String TAG = Sample.class.getName();
-	static boolean DEBUG = true;
-	View optionsContainer;
+	static final String  TAG   = Sample.class.getName();
+	static       boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
-	Context context;
+	private Animation popUpAnimation;
+	private Animation popInAnimation;
+	private View      optionsContainer;
+	private boolean   optionsToggled;
 
 	@Override public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -22,32 +24,27 @@ public class Sample
 			Log.d(TAG, "onCreate");
 		}
 		setContentView(R.layout.controler);
-		context = getBaseContext();
-		//		Button button = (Button)findViewById(R.id.button);
-		//		button.setOnClickListener(new View.OnClickListener() {
-		//			@Override
-		//			public void onClick(View view) {
-		//				if (DEBUG) Log.d(TAG, "onClick");
-		//				doTest(context);
-		//			}
-		//		});
 
-		View commandButton = findViewById(R.id.button3);
+		View commandButton = findViewById(R.id.button_attribute);
 		optionsContainer = findViewById(R.id.options);
 		if (commandButton != null && optionsContainer != null) {
 			commandButton.setOnClickListener(new View.OnClickListener() {
 
-				@Override public void onClick (View v) {
-					toggle();
+				@Override public void onClick (View view) {
+					toggleOptions();
 				}
 			});
 		}
+
+		popUpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_up);
+		popInAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_in);
 	}
 
-	void toggle() {
-		int containerVisibility = optionsContainer.getVisibility();
-		int newVisibilityState = containerVisibility == View.INVISIBLE? View.VISIBLE: View.INVISIBLE;
-		optionsContainer.setVisibility(newVisibilityState);
+	private void toggleOptions () {
+		optionsContainer.startAnimation(optionsToggled ?
+				popInAnimation :
+				popUpAnimation);
+		optionsToggled = !optionsToggled;
 	}
 
 	@Override protected void onStart () {
@@ -90,10 +87,5 @@ public class Sample
 		if (DEBUG) {
 			Log.d(TAG, "onDestroy");
 		}
-	}
-
-	public void doTest (Context context) {
-		Button button = (Button) findViewById(R.id.button);
-		button.setText("Started");
 	}
 }
