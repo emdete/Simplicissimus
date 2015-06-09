@@ -1,24 +1,22 @@
 package org.pyneo.android.gui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 
 public class Sample
 		extends Activity {
-	static final String TAG = Sample.class.getName();
-	static boolean DEBUG = true;
+	static final String  TAG   = Sample.class.getName();
+	static       boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private Animation popUpAnimation;
 	private Animation popInAnimation;
-	private boolean toggle;
 	private View      optionsContainer;
+	private boolean   optionsToggled;
 
 	@Override public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,23 +24,14 @@ public class Sample
 			Log.d(TAG, "onCreate");
 		}
 		setContentView(R.layout.controler);
-		//		Button button = (Button)findViewById(R.id.button);
-		//		button.setOnClickListener(new View.OnClickListener() {
-		//			@Override
-		//			public void onClick(View view) {
-		//				if (DEBUG) Log.d(TAG, "onClick");
-		//				doTest(context);
-		//			}
-		//		});
 
 		View commandButton = findViewById(R.id.button_attribute);
 		optionsContainer = findViewById(R.id.options);
 		if (commandButton != null && optionsContainer != null) {
 			commandButton.setOnClickListener(new View.OnClickListener() {
 
-				@Override public void onClick (View v) {
+				@Override public void onClick (View view) {
 					toggleOptions();
-					toggle = !toggle;
 				}
 			});
 		}
@@ -52,9 +41,10 @@ public class Sample
 	}
 
 	private void toggleOptions () {
-		optionsContainer.startAnimation(toggle ?
+		optionsContainer.startAnimation(optionsToggled ?
 				popInAnimation :
 				popUpAnimation);
+		optionsToggled = !optionsToggled;
 	}
 
 	@Override protected void onStart () {
@@ -97,10 +87,5 @@ public class Sample
 		if (DEBUG) {
 			Log.d(TAG, "onDestroy");
 		}
-	}
-
-	public void doTest (Context context) {
-		Button button = (Button) findViewById(R.id.button);
-		button.setText("Started");
 	}
 }
