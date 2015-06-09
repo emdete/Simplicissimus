@@ -11,13 +11,14 @@
         android:src="@drawable/ic_action_zoom_out"
         />
     <ImageButton
-        android:id="@+id/button3"
+        android:id="@+id/button_attribute"
         style="@style/buttonstyle"
-        android:src="@drawable/attribute"
+        android:src="@drawable/attribute_green"
         />
     <ImageButton
         android:id="@+id/button5"
         style="@style/buttonstyle"
+        android:visibility="invisible"
         android:src="@drawable/ic_action_overlays"
         />
     <ImageButton

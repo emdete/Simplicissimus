@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/commands"
         android:orientation="horizontal"
-        android:visibility="visible"
+        android:visibility="invisible"
         >
         <include
             android:id="@+id/generic_include"

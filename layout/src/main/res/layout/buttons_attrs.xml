@@ -11,14 +11,14 @@
         style="@style/buttonstyle"
         />
     <ImageButton
-        android:id="@+id/button_attr_3"
-        style="@style/buttonstyle"
-        android:src="@drawable/attribute_blue"
-        />
-    <ImageButton
         android:id="@+id/button_attr_4"
         style="@style/buttonstyle"
         android:src="@drawable/attribute_green"
+        />
+    <ImageButton
+        android:id="@+id/button_attr_3"
+        style="@style/buttonstyle"
+        android:src="@drawable/attribute_blue"
         />
     <ImageButton
         android:id="@+id/button_attr_5"
