@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 public class Sample
@@ -13,7 +15,10 @@ public class Sample
 	static       boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
-	Context context;
+	private Animation popUpAnimation;
+	private Animation popInAnimation;
+	private boolean toggle;
+	private View      optionsContainer;
 
 	@Override public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,7 +26,6 @@ public class Sample
 			Log.d(TAG, "onCreate");
 		}
 		setContentView(R.layout.controler);
-		context = getBaseContext();
 		//		Button button = (Button)findViewById(R.id.button);
 		//		button.setOnClickListener(new View.OnClickListener() {
 		//			@Override
@@ -32,19 +36,25 @@ public class Sample
 		//		});
 
 		View commandButton = findViewById(R.id.button3);
-		final View optionsContainer = findViewById(R.id.options);
+		optionsContainer = findViewById(R.id.options);
 		if (commandButton != null && optionsContainer != null) {
 			commandButton.setOnClickListener(new View.OnClickListener() {
 
 				@Override public void onClick (View v) {
-					int containerVisibility = optionsContainer.getVisibility();
-					int newVisibilityState = containerVisibility == View.INVISIBLE ?
-							View.VISIBLE :
-							View.INVISIBLE;
-					optionsContainer.setVisibility(newVisibilityState);
+					toggleOptions();
+					toggle = !toggle;
 				}
 			});
 		}
+
+		popUpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_up);
+		popInAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_in);
+	}
+
+	private void toggleOptions () {
+		optionsContainer.startAnimation(toggle ?
+				popInAnimation :
+				popUpAnimation);
 	}
 
 	@Override protected void onStart () {
