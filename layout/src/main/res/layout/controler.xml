@@ -6,10 +6,9 @@
 
     <LinearLayout
         android:id="@+id/options"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:visibility="invisible"
         >
@@ -25,7 +24,7 @@
 
     <LinearLayout
         android:id="@+id/commands"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
@@ -37,6 +36,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
-
     </LinearLayout>
 </RelativeLayout>

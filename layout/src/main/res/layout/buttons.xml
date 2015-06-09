@@ -1,56 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ImageButton
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@null"
-        android:scaleType="centerInside"
+        style="@style/buttonstyle"
         android:src="@drawable/ic_action_zoom_in"
         />
-
     <ImageButton
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@null"
-        android:scaleType="centerInside"
+        style="@style/buttonstyle"
         android:src="@drawable/ic_action_zoom_out"
         />
-
     <ImageButton
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/attribute"
+        android:id="@+id/button_attribute"
+        style="@style/buttonstyle"
+        android:src="@drawable/attribute_green"
         />
-
     <ImageButton
         android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_action_overlays"
+        style="@style/buttonstyle"
         android:visibility="invisible"
+        android:src="@drawable/ic_action_overlays"
         />
-
     <ImageButton
         android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@null"
-        android:scaleType="centerInside"
+        style="@style/buttonstyle"
         android:src="@drawable/ic_action_autofollow"
         />
-
 </merge>

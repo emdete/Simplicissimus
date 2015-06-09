@@ -11,8 +11,8 @@ import android.widget.Button;
 
 public class Sample
 		extends Activity {
-	static final String  TAG   = Sample.class.getName();
-	static       boolean DEBUG = true;
+	static final String TAG = Sample.class.getName();
+	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private Animation popUpAnimation;
@@ -35,7 +35,7 @@ public class Sample
 		//			}
 		//		});
 
-		View commandButton = findViewById(R.id.button3);
+		View commandButton = findViewById(R.id.button_attribute);
 		optionsContainer = findViewById(R.id.options);
 		if (commandButton != null && optionsContainer != null) {
 			commandButton.setOnClickListener(new View.OnClickListener() {
