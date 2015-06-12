@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_pre_load">Karte vorab laden</string>
+	<string name="menu_map_list">Liste der Kartenanbieter</string>
+	<string name="menu_poi_list">Liste der POIs</string>
+	<string name="menu_track_list">Liste der Pfade</string>
+</resources>
