@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	>
+	<LinearLayout
+		android:id="@+id/attributes"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal"
+		android:visibility="invisible"
+		>
+		<include
+			layout="@layout/buttons_attrs"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			/>
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/commands"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal"
+		>
+		<include
+			layout="@layout/buttons"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			/>
+	</LinearLayout>
+</RelativeLayout>

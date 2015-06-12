@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_height="wrap_content"
+	android:layout_width="fill_parent"
+	android:padding="3sp"
+	>
+	<TextView
+		android:id="@+id/data_header"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:maxLines="1"
+		tools:text="Speed"
+		/>
+	<TextView
+		android:id="@+id/data_value"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/data_header"
+		android:maxLines="1"
+		tools:text="52.0"
+		/>
+	<TextView
+		android:id="@+id/data_unit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBaseline="@+id/data_value"
+		android:layout_toRightOf="@+id/data_value"
+		android:maxLines="1"
+		android:paddingLeft="1sp"
+		tools:text="km/h"
+		/>
+</RelativeLayout>
