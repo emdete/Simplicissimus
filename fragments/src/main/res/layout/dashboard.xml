@@ -7,11 +7,16 @@
 	android:gravity="top"
 	>
 	<LinearLayout
-		android:layout_height="50sp"
+		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
 		android:padding="3sp"
 		android:orientation="vertical"
-		android:background="#ff333333"
+		android:background="@color/accent"
 		>
+		<include
+			layout="@layout/dashboard_item"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			/>
 	</LinearLayout>
 </RelativeLayout>

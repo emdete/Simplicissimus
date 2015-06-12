@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
-	<uses-sdk android:minSdkVersion="11"/>
-	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
-		<activity android:label="Sample" android:name="Sample" >
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="org.pyneo.android.gui"
+	android:versionCode="1"
+	android:versionName="1.0"
+	>
+	<uses-sdk
+		android:minSdkVersion="11"/>
+	<application
+		android:label="Sample"
+		android:icon="@drawable/ic_launcher"
+		android:allowBackup="false"
+		android:theme="@style/Theme"
+		>
+		<activity
+			android:label="Sample"
+			android:name="Sample"
+			>
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
+				<action
+					android:name="android.intent.action.MAIN"
+					/>
+				<category
+					android:name="android.intent.category.LAUNCHER"
+					/>
 			</intent-filter>
 		</activity>
 	</application>

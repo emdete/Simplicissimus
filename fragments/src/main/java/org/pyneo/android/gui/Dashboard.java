@@ -21,25 +21,25 @@ public class Dashboard extends Base {
 	}
 
 	@Override public void onAttach(Activity activity) {
-		if (DEBUG) { Log.d(TAG, "onAttach"); }
+		if (DEBUG) { Log.d(TAG, "Dashboard.onAttach"); }
 		super.onAttach(activity);
 		this.activity = activity;
 		context = activity.getApplicationContext();
 	}
 
 	@Override public void onCreate(Bundle bundle) {
-		if (DEBUG) { Log.d(TAG, "onCreate"); }
+		if (DEBUG) { Log.d(TAG, "Dashboard.onCreate"); }
 		super.onCreate(bundle);
 
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (DEBUG) { Log.d(TAG, "onCreateView"); }
+		if (DEBUG) { Log.d(TAG, "Dashboard.onCreateView"); }
 		return inflater.inflate(R.layout.dashboard, container, false);
 	}
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "onActivityCreated"); }
+		if (DEBUG) { Log.d(TAG, "Dashboard.onActivityCreated"); }
 	}
 }

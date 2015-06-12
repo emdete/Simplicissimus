@@ -36,6 +36,7 @@ public class Controller extends Base {
 	}
 
 	private void onClick(View view) {
+		if (DEBUG) { Log.d(TAG, "Controller.onClick"); }
 		int e = view.getId();
 		switch(e) {
 			case R.id.event_attribute: {
@@ -50,26 +51,25 @@ public class Controller extends Base {
 	}
 
 	@Override public void onAttach(Activity activity) {
-		if (DEBUG) { Log.d(TAG, "onAttach"); }
+		if (DEBUG) { Log.d(TAG, "Controller.onAttach"); }
 		super.onAttach(activity);
 		this.activity = activity;
 		context = activity.getApplicationContext();
 	}
 
 	@Override public void onCreate(Bundle bundle) {
-		if (DEBUG) { Log.d(TAG, "onCreate"); }
+		if (DEBUG) { Log.d(TAG, "Controller.onCreate"); }
 		super.onCreate(bundle);
-
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (DEBUG) { Log.d(TAG, "onCreateView"); }
+		if (DEBUG) { Log.d(TAG, "Controller.onCreateView"); }
 		return inflater.inflate(R.layout.controller, container, false);
 	}
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "onActivityCreated"); }
+		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
 		optionsContainer = activity.findViewById(R.id.attributes);
 		popOutAnimation = AnimationUtils.loadAnimation(context, R.anim.anim_pop_out);
 		popInAnimation = AnimationUtils.loadAnimation(context, R.anim.anim_pop_in);
@@ -89,7 +89,6 @@ public class Controller extends Base {
 			imageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					if (DEBUG) { Log.d(TAG, "onClick"); }
 					Controller.this.onClick(view);
 				}
 			});

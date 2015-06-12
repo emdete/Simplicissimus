@@ -8,4 +8,12 @@
 		<item name="android:layout_weight">1</item>
 		<item name="android:visibility">visible</item>
 	</style>
+	<style name="Theme" parent="@android:style/Theme.Material">
+		<item name="android:colorPrimaryDark">@color/primaryDark</item>
+		<item name="android:colorPrimary">@color/primary</item>
+		<item name="android:textColorPrimary">@color/textPrimary</item>
+		<item name="android:colorAccent">@color/accent</item>
+		<item name="android:windowBackground">@color/windowBackground</item>
+		<item name="android:navigationBarColor">@color/navigationBar</item>
+	</style>
 </resources>

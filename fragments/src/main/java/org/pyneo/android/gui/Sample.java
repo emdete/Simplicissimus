@@ -15,7 +15,7 @@ public class Sample extends Activity {
 
 	@Override public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "onCreate"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onCreate"); }
 		Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler(){
 			@Override public void uncaughtException (Thread thread, Throwable e) {
 				Log.e(TAG, "error e=" + e, e);
@@ -37,32 +37,32 @@ public class Sample extends Activity {
 
 	@Override protected void onStart () {
 		super.onStart();
-		if (DEBUG) { Log.d(TAG, "onStart"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onStart"); }
 	}
 
 	@Override protected void onRestart () {
 		super.onRestart();
-		if (DEBUG) { Log.d(TAG, "onRestart"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onRestart"); }
 	}
 
 	@Override protected void onResume () {
 		super.onResume();
-		if (DEBUG) { Log.d(TAG, "onResume"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onResume"); }
 	}
 
 	@Override protected void onPause () {
 		super.onPause();
-		if (DEBUG) { Log.d(TAG, "onPause"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onPause"); }
 	}
 
 	@Override protected void onStop () {
 		super.onStop();
-		if (DEBUG) { Log.d(TAG, "onStop"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onStop"); }
 	}
 
 	@Override protected void onDestroy () {
 		super.onDestroy();
-		if (DEBUG) { Log.d(TAG, "onDestroy"); }
+		if (DEBUG) { Log.d(TAG, "Sample.onDestroy"); }
 	}
 
 	public void inform(int event, Bundle extra) {
