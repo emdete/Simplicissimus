@@ -17,8 +17,12 @@ public class Dashboard extends Base {
 	static final private boolean DEBUG = Sample.DEBUG;
 	private Activity activity;
 	private Context context;
+	private boolean visible = true;
 
 	public void inform(int event, Bundle extra) {
+		switch (event) {
+			case R.id.event_autofollow: activity.findViewById(R.id.dashboard).setVisibility(visible? View.GONE: View.VISIBLE); visible = !visible; break;
+		}
 	}
 
 	@Override public void onAttach(Activity activity) {

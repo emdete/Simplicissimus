@@ -20,6 +20,11 @@ public class Controller extends Base {
 	private Animation popInAnimation;
 	private View optionsContainer;
 	private boolean optionsOut;
+	View.OnClickListener clickListener = new View.OnClickListener() {
+		@Override public void onClick(View view) {
+			Controller.this.onClick(view);
+		}
+	};
 
 	public void inform(int event, Bundle extra) {
 		if (optionsOut) {
@@ -27,11 +32,11 @@ public class Controller extends Base {
 			optionsOut = false;
 		}
 		switch (event) {
-		case R.id.event_attribute_red: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_red); break;
-		case R.id.event_attribute_yellow: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_yellow); break;
-		case R.id.event_attribute_green: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_green); break;
-		case R.id.event_attribute_blue: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_blue); break;
-		case R.id.event_attribute_white: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_white); break;
+			case R.id.event_attribute_red: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_red); break;
+			case R.id.event_attribute_yellow: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_yellow); break;
+			case R.id.event_attribute_green: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_green); break;
+			case R.id.event_attribute_blue: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_blue); break;
+			case R.id.event_attribute_white: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_white); break;
 		}
 	}
 
@@ -85,13 +90,7 @@ public class Controller extends Base {
 				R.id.event_zoom_in,
 				R.id.event_zoom_out,
 		}) {
-			View imageButton = activity.findViewById(resourceId);
-			imageButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Controller.this.onClick(view);
-				}
-			});
+			activity.findViewById(resourceId).setOnClickListener(clickListener);
 		}
 	}
 }

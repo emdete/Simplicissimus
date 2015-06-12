@@ -6,12 +6,10 @@
 	android:shareInterpolator="true"
 	android:duration="100"
 	>
-
 	<alpha
 		android:fromAlpha="0"
 		android:toAlpha="1"
 		/>
-
 	<scale
 		android:fromXScale="0"
 		android:fromYScale="0"
@@ -20,9 +18,8 @@
 		android:toXScale="1"
 		android:toYScale="1"
 		/>
-
 	<translate
-		android:fromYDelta="0%"
-		android:toYDelta="-100%"
+		android:fromYDelta="100%"
+		android:toYDelta="0%"
 		/>
 </set>

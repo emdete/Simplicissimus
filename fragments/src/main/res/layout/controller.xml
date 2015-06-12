@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/controller_list"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:animateLayoutChanges="true"
+	android:gravity="bottom"
 	>
 	<LinearLayout
 		android:id="@+id/attributes"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
 		android:orientation="horizontal"
 		android:visibility="invisible"
 		>
 		<include
-			layout="@layout/buttons_attrs"
+			layout="@layout/buttons_attributs"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			/>
@@ -21,8 +25,8 @@
 		android:id="@+id/commands"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
 		android:orientation="horizontal"
+		android:visibility="visible"
 		>
 		<include
 			layout="@layout/buttons"
@@ -30,4 +34,4 @@
 			android:layout_height="wrap_content"
 			/>
 	</LinearLayout>
-</RelativeLayout>
+</LinearLayout>
