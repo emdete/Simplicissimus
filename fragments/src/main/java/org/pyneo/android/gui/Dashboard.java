@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 public class Dashboard extends Base {
 	static final private String TAG = Sample.TAG;
@@ -30,7 +31,6 @@ public class Dashboard extends Base {
 	@Override public void onCreate(Bundle bundle) {
 		if (DEBUG) { Log.d(TAG, "Dashboard.onCreate"); }
 		super.onCreate(bundle);
-
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,5 +41,14 @@ public class Dashboard extends Base {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if (DEBUG) { Log.d(TAG, "Dashboard.onActivityCreated"); }
+		ViewGroup viewGroup = (ViewGroup)activity.findViewById(R.id.dashboard).findViewById(R.id.dashboard_list);
+		viewGroup.removeAllViews();
+		for (int i=0;i<3;i++) {
+			View item = (View)LayoutInflater.from(context).inflate(R.layout.dashboard_item, viewGroup, false);
+			((TextView)item.findViewById(R.id.data_header)).setText("Speed");
+			((TextView)item.findViewById(R.id.data_value)).setText("52." + i);
+			((TextView)item.findViewById(R.id.data_unit)).setText("km/h");
+			viewGroup.addView(item);
+		}
 	}
 }

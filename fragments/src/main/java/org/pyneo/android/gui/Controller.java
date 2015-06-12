@@ -36,8 +36,8 @@ public class Controller extends Base {
 	}
 
 	private void onClick(View view) {
-		if (DEBUG) { Log.d(TAG, "Controller.onClick"); }
 		int e = view.getId();
+		if (DEBUG) { Log.d(TAG, "Controller.onClick e=" + e); }
 		switch(e) {
 			case R.id.event_attribute: {
 				if (!optionsOut) {
