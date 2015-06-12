@@ -27,6 +27,7 @@ public class Controller extends Base {
 	};
 
 	public void inform(int event, Bundle extra) {
+		if (DEBUG) { Log.d(TAG, "Controller.inform event=" + event); }
 		if (optionsOut) {
 			optionsContainer.startAnimation(popInAnimation);
 			optionsOut = false;
@@ -76,8 +77,8 @@ public class Controller extends Base {
 		super.onActivityCreated(savedInstanceState);
 		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
 		optionsContainer = activity.findViewById(R.id.attributes);
-		popOutAnimation = AnimationUtils.loadAnimation(context, R.anim.anim_pop_out);
-		popInAnimation = AnimationUtils.loadAnimation(context, R.anim.anim_pop_in);
+		popOutAnimation = AnimationUtils.loadAnimation(context, R.anim.attributes_open);
+		popInAnimation = AnimationUtils.loadAnimation(context, R.anim.attributes_close);
 		for (int resourceId: new int[]{
 				R.id.event_attribute_blue,
 				R.id.event_attribute_green,

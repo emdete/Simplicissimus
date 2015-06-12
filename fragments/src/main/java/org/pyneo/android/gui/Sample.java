@@ -6,6 +6,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class Sample extends Activity {
 	static public final String TAG = Sample.class.getName();
@@ -63,6 +65,19 @@ public class Sample extends Activity {
 	@Override protected void onDestroy () {
 		super.onDestroy();
 		if (DEBUG) { Log.d(TAG, "Sample.onDestroy"); }
+	}
+
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.main_option_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		inform(item.getItemId(), null);
+		return true;
 	}
 
 	public void inform(int event, Bundle extra) {

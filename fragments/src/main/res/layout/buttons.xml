@@ -5,12 +5,12 @@
 	<ImageButton
 		android:id="@+id/event_zoom_in"
 		style="@style/buttonstyle"
-		android:src="@drawable/ic_action_zoom_in"
+		android:src="@drawable/ic_zoom_in"
 		/>
 	<ImageButton
 		android:id="@+id/event_zoom_out"
 		style="@style/buttonstyle"
-		android:src="@drawable/ic_action_zoom_out"
+		android:src="@drawable/ic_zoom_out"
 		/>
 	<ImageButton
 		android:id="@+id/event_attribute"
@@ -21,11 +21,11 @@
 		android:id="@+id/event_overlay"
 		style="@style/buttonstyle"
 		android:visibility="invisible"
-		android:src="@drawable/ic_action_overlays"
+		android:src="@drawable/ic_overlays"
 		/>
 	<ImageButton
 		android:id="@+id/event_autofollow"
 		style="@style/buttonstyle"
-		android:src="@drawable/ic_action_autofollow"
+		android:src="@drawable/ic_autofollow"
 		/>
 </merge>

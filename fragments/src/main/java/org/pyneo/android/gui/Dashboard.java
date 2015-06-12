@@ -20,6 +20,7 @@ public class Dashboard extends Base {
 	private boolean visible = true;
 
 	public void inform(int event, Bundle extra) {
+		if (DEBUG) { Log.d(TAG, "Dashboard.inform event=" + event); }
 		switch (event) {
 			case R.id.event_autofollow: activity.findViewById(R.id.dashboard).setVisibility(visible? View.GONE: View.VISIBLE); visible = !visible; break;
 		}
