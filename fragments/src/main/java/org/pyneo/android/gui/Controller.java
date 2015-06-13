@@ -5,12 +5,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.support.v4.view.MotionEventCompat;
 
 public class Controller extends Base {
 	static final private String TAG = Sample.TAG;
@@ -36,7 +39,7 @@ public class Controller extends Base {
 	}
 
 	private boolean onDrag(View v, DragEvent event) {
-		if (DEBUG) { Log.d(TAG, "Controller.onClick event=" + event); }
+		if (DEBUG) { Log.d(TAG, "Controller.onDrag event=" + event); }
 		return true;
 	}
 
@@ -73,11 +76,6 @@ public class Controller extends Base {
 				Controller.this.onClick(view);
 			}
 		};
-		View.OnDragListener dragListener = new View.OnDragListener() {
-			@Override public boolean onDrag(View v, DragEvent event) {
-				return Controller.this.onDrag(v, event);
-			}
-		};
 		for (int resourceId: new int[]{
 				R.id.event_attribute_blue,
 				R.id.event_attribute_green,
@@ -92,7 +90,17 @@ public class Controller extends Base {
 		}) {
 			view.findViewById(resourceId).setOnClickListener(clickListener);
 		}
-		view.findViewById(R.id.drag).setOnDragListener(dragListener);
+		view.findViewById(R.id.drag).setOnTouchListener(new View.OnTouchListener() {
+			@Override public boolean onTouch(View v, MotionEvent event) {
+				if (DEBUG) { Log.d(TAG, "Controller.onTouch event=" + event); }
+				switch (MotionEventCompat.getActionMasked(event)) {
+					case MotionEvent.ACTION_MOVE: {
+						break;
+					}
+				}
+				return true;
+			}
+		});
 		return view;
 	}
 
