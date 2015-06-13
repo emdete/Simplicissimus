@@ -67,15 +67,7 @@ public class Controller extends Base {
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (DEBUG) { Log.d(TAG, "Controller.onCreateView"); }
-		return inflater.inflate(R.layout.controller, container, false);
-	}
-
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
-		optionsContainer = getActivity().findViewById(R.id.attributes);
-		popOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_open);
-		popInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_close);
+		View view = inflater.inflate(R.layout.controller, container, false);
 		View.OnClickListener clickListener = new View.OnClickListener() {
 			@Override public void onClick(View view) {
 				Controller.this.onClick(view);
@@ -98,8 +90,17 @@ public class Controller extends Base {
 				R.id.event_zoom_in,
 				R.id.event_zoom_out,
 		}) {
-			getActivity().findViewById(resourceId).setOnClickListener(clickListener);
+			view.findViewById(resourceId).setOnClickListener(clickListener);
 		}
-		getActivity().findViewById(R.id.drag).setOnDragListener(dragListener);
+		view.findViewById(R.id.drag).setOnDragListener(dragListener);
+		return view;
+	}
+
+	@Override public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
+		optionsContainer = getActivity().findViewById(R.id.attributes);
+		popOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_open);
+		popInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_close);
 	}
 }
