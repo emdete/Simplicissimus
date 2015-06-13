@@ -4,6 +4,7 @@ import android.util.Log;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +15,10 @@ import android.widget.ImageButton;
 public class Controller extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
-	private Activity activity;
-	private Context context;
 	private Animation popOutAnimation;
 	private Animation popInAnimation;
 	private View optionsContainer;
 	private boolean optionsOut;
-	View.OnClickListener clickListener = new View.OnClickListener() {
-		@Override public void onClick(View view) {
-			Controller.this.onClick(view);
-		}
-	};
 
 	public void inform(int event, Bundle extra) {
 		if (DEBUG) { Log.d(TAG, "Controller.inform event=" + event); }
@@ -33,12 +27,17 @@ public class Controller extends Base {
 			optionsOut = false;
 		}
 		switch (event) {
-			case R.id.event_attribute_red: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_red); break;
-			case R.id.event_attribute_yellow: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_yellow); break;
-			case R.id.event_attribute_green: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_green); break;
-			case R.id.event_attribute_blue: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_blue); break;
-			case R.id.event_attribute_white: ((ImageButton)activity.findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_white); break;
+			case R.id.event_attribute_red: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_red); break;
+			case R.id.event_attribute_yellow: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_yellow); break;
+			case R.id.event_attribute_green: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_green); break;
+			case R.id.event_attribute_blue: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_blue); break;
+			case R.id.event_attribute_white: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_white); break;
 		}
+	}
+
+	private boolean onDrag(View v, DragEvent event) {
+		if (DEBUG) { Log.d(TAG, "Controller.onClick event=" + event); }
+		return true;
 	}
 
 	private void onClick(View view) {
@@ -53,14 +52,12 @@ public class Controller extends Base {
 				}
 			}
 		}
-		((Sample) activity).inform(e, null);
+		((Sample) getActivity()).inform(e, null);
 	}
 
 	@Override public void onAttach(Activity activity) {
 		if (DEBUG) { Log.d(TAG, "Controller.onAttach"); }
 		super.onAttach(activity);
-		this.activity = activity;
-		context = activity.getApplicationContext();
 	}
 
 	@Override public void onCreate(Bundle bundle) {
@@ -76,9 +73,19 @@ public class Controller extends Base {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
-		optionsContainer = activity.findViewById(R.id.attributes);
-		popOutAnimation = AnimationUtils.loadAnimation(context, R.anim.attributes_open);
-		popInAnimation = AnimationUtils.loadAnimation(context, R.anim.attributes_close);
+		optionsContainer = getActivity().findViewById(R.id.attributes);
+		popOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_open);
+		popInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_close);
+		View.OnClickListener clickListener = new View.OnClickListener() {
+			@Override public void onClick(View view) {
+				Controller.this.onClick(view);
+			}
+		};
+		View.OnDragListener dragListener = new View.OnDragListener() {
+			@Override public boolean onDrag(View v, DragEvent event) {
+				return Controller.this.onDrag(v, event);
+			}
+		};
 		for (int resourceId: new int[]{
 				R.id.event_attribute_blue,
 				R.id.event_attribute_green,
@@ -91,7 +98,8 @@ public class Controller extends Base {
 				R.id.event_zoom_in,
 				R.id.event_zoom_out,
 		}) {
-			activity.findViewById(resourceId).setOnClickListener(clickListener);
+			getActivity().findViewById(resourceId).setOnClickListener(clickListener);
 		}
+		getActivity().findViewById(R.id.drag).setOnDragListener(dragListener);
 	}
 }

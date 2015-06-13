@@ -15,22 +15,18 @@ import android.widget.TextView;
 public class Dashboard extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
-	private Activity activity;
-	private Context context;
 	private boolean visible = true;
 
 	public void inform(int event, Bundle extra) {
 		if (DEBUG) { Log.d(TAG, "Dashboard.inform event=" + event); }
 		switch (event) {
-			case R.id.event_autofollow: activity.findViewById(R.id.dashboard).setVisibility(visible? View.GONE: View.VISIBLE); visible = !visible; break;
+			case R.id.event_autofollow: getActivity().findViewById(R.id.dashboard).setVisibility(visible? View.GONE: View.VISIBLE); visible = !visible; break;
 		}
 	}
 
 	@Override public void onAttach(Activity activity) {
 		if (DEBUG) { Log.d(TAG, "Dashboard.onAttach"); }
 		super.onAttach(activity);
-		this.activity = activity;
-		context = activity.getApplicationContext();
 	}
 
 	@Override public void onCreate(Bundle bundle) {
@@ -46,10 +42,10 @@ public class Dashboard extends Base {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if (DEBUG) { Log.d(TAG, "Dashboard.onActivityCreated"); }
-		ViewGroup viewGroup = (ViewGroup)activity.findViewById(R.id.dashboard).findViewById(R.id.dashboard_list);
+		ViewGroup viewGroup = (ViewGroup)getActivity().findViewById(R.id.dashboard).findViewById(R.id.dashboard_list);
 		viewGroup.removeAllViews();
 		for (int i=0;i<3;i++) {
-			View item = (View)LayoutInflater.from(context).inflate(R.layout.dashboard_item, viewGroup, false);
+			View item = (View)LayoutInflater.from(getActivity()).inflate(R.layout.dashboard_item, viewGroup, false);
 			((TextView)item.findViewById(R.id.data_header)).setText("Speed");
 			((TextView)item.findViewById(R.id.data_value)).setText("52." + i);
 			((TextView)item.findViewById(R.id.data_unit)).setText("km/h");

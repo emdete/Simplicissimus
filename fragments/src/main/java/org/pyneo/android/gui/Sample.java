@@ -26,7 +26,10 @@ public class Sample extends Activity {
 		});
 		setContentView (R.layout.base);
 		fragments = new Base[]{
+				new Map(),
+				new Track(),
 				new Controller(),
+				new Poi(),
 				new Dashboard(),
 		};
 		FragmentManager fragmentManager = getFragmentManager();
