@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 repositories {
-    jcenter()
+	jcenter()
 }
 
 apply from: "../../pyneo.org.gradle"
@@ -26,8 +26,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+	compileSdkVersion 21
+	buildToolsVersion "21.1.1"
 	defaultConfig {
 		minSdkVersion 21
 		targetSdkVersion 21

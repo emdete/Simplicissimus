@@ -61,6 +61,12 @@ public class Sample extends Activity {
 	}
 
 	@Override
+	protected void onSaveInstanceState(Bundle bundle) {
+		super.onSaveInstanceState(bundle);
+		if (DEBUG) Log.d(TAG, "onSaveInstanceState bundle=" + bundle);
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		if (DEBUG) Log.d(TAG, "onDestroy");
