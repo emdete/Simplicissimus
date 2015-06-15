@@ -1,67 +1,36 @@
 package org.pyneo.android.cam;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.util.Size;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.util.Log;
-import android.util.Size;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
 import android.view.Surface;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 public class UnattendedPic {
 	private static final String TAG = UnattendedPic.class.getName();
 	private static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
-
 	private static class ImageSaver implements Runnable {
 		private final Image mImage;
 		private final File mFile;
@@ -94,7 +63,6 @@ public class UnattendedPic {
 			}
 		}
 	}
-
 	private HandlerThread mBackgroundThread;
 	private Handler mBackgroundHandler;
 	private ImageReader mImageReader;
@@ -102,9 +70,8 @@ public class UnattendedPic {
 		@Override
 		public void onImageAvailable(ImageReader reader) {
 			Log.d(TAG, "onImageAvailable");
-			mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+			mBackgroundHandler.post(new ImageSaver(reader.acquireLatestImage(), mFile));
 		}
-
 	};
 	private CameraDevice mCameraDevice;
 	private Semaphore mCameraOpenCloseLock = new Semaphore(1);
@@ -138,6 +105,7 @@ public class UnattendedPic {
 							@Override
 							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
 								Log.d(TAG, "onCaptureCompleted");
+								captured(mFile);
 							}
 						};
 						Log.d(TAG, "onConfigured: capture!");
@@ -173,12 +141,17 @@ public class UnattendedPic {
 	};
 	private File mFile;
 
-	public void start(Activity activity) {
+	public void capture(Activity activity) {
+		Log.d(TAG, "capture!");
+		boolean isLS = activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+		Log.d(TAG, "capture isLS=" + isLS);
+		boolean isR = activity.getWindowManager().getDefaultDisplay().getRotation() != Surface.ROTATION_0;
+		Log.d(TAG, "capture isR=" + isR);
 		if (mImageReader == null) {
 			mBackgroundThread = new HandlerThread("CameraBackground");
 			mBackgroundThread.start();
 			mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-			mFile = new File("/sdcard", "pic.jpg");
+			mFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath(), "pic.jpg");
 			try {
 				CameraManager manager = (CameraManager)activity.getSystemService(Context.CAMERA_SERVICE);
 				for (String cameraId: manager.getCameraIdList()) {
@@ -191,10 +164,14 @@ public class UnattendedPic {
 						if (DEBUG) Log.d(TAG, "doTest characteristics=" + characteristics);
 						StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 						if (DEBUG) Log.d(TAG, "doTest map=" + map);
-						for (Object o: map.getOutputSizes(ImageFormat.JPEG)) {
+						int width = 800;
+						int height = 600;
+						for (Size o: map.getOutputSizes(ImageFormat.JPEG)) {
 							if (DEBUG) Log.d(TAG, "doTest o=" + o);
+							o.getWidth();
+							o.getHeight();
 						}
-						mImageReader = ImageReader.newInstance(800, 600, ImageFormat.JPEG, 2);
+						mImageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 2);
 						mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
 						manager.openCamera(cameraId, mStateCallback, mBackgroundHandler);
 						break; // go on in onOpened, it's async
@@ -205,15 +182,12 @@ public class UnattendedPic {
 				Log.e(TAG, "caught exception", e);
 			}
 		}
-	}
-
-	public void capture(Activity activity) {
-		Log.d(TAG, "doTest: capture!");
-		start(activity);
-		try {
-			mCaptureSession.capture(captureBuilder.build(), captureCallback, null);
-		} catch (Exception e) {
-			Log.e(TAG, "caught an exception", e);
+		else {
+			try {
+				mCaptureSession.capture(captureBuilder.build(), captureCallback, null);
+			} catch (Exception e) {
+				Log.e(TAG, "caught an exception", e);
+			}
 		}
 	}
 
@@ -250,6 +224,7 @@ public class UnattendedPic {
 		}
 	}
 
-
-
+	public void captured(File file) {
+		if (DEBUG) Log.d(TAG, "captured file=" + file);
+	}
 }
