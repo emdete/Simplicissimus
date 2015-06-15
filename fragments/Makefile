@@ -7,8 +7,10 @@ run:
 	./gradlew -q assembleDebug
 
 dbg: run
+	chmod 0644 *-logo.png build/outputs/apk/*-debug.apk
+	rsync --verbose --archive *-logo.png build/outputs/apk/*-debug.apk littlelun.emdete.de:/var/www/pyneo.org/c/.
 	#adb uninstall org.pyneo.android.gui
-	adb install -r build/outputs/apk/*-debug-unaligned.apk
+	adb install -r build/outputs/apk/*-debug.apk
 	adb shell am start org.pyneo.android.gui/.Sample
 
 clean:

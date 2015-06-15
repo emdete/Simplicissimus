@@ -1,5 +1,6 @@
 package org.pyneo.android.gui;
 
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -24,7 +26,7 @@ public class Controller extends Base {
 	private boolean optionsOut;
 
 	public void inform(int event, Bundle extra) {
-		if (DEBUG) { Log.d(TAG, "Controller.inform event=" + event); }
+		if (DEBUG) Log.d(TAG, "Controller.inform event=" + event + ", extra=" + extra);
 		if (optionsOut) {
 			optionsContainer.startAnimation(popInAnimation);
 			optionsOut = false;
@@ -36,26 +38,6 @@ public class Controller extends Base {
 			case R.id.event_attribute_blue: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_blue); break;
 			case R.id.event_attribute_white: ((ImageButton)getActivity().findViewById(R.id.event_attribute)).setImageResource(R.drawable.attribute_white); break;
 		}
-	}
-
-	private boolean onDrag(View v, DragEvent event) {
-		if (DEBUG) { Log.d(TAG, "Controller.onDrag event=" + event); }
-		return true;
-	}
-
-	private void onClick(View view) {
-		int e = view.getId();
-		if (DEBUG) { Log.d(TAG, "Controller.onClick e=" + e); }
-		switch(e) {
-			case R.id.event_attribute: {
-				if (!optionsOut) {
-					optionsContainer.startAnimation(popOutAnimation);
-					optionsOut = true;
-					return;
-				}
-			}
-		}
-		((Sample) getActivity()).inform(e, null);
 	}
 
 	@Override public void onAttach(Activity activity) {
@@ -73,7 +55,18 @@ public class Controller extends Base {
 		View view = inflater.inflate(R.layout.controller, container, false);
 		View.OnClickListener clickListener = new View.OnClickListener() {
 			@Override public void onClick(View view) {
-				Controller.this.onClick(view);
+				int e = view.getId();
+				if (DEBUG) { Log.d(TAG, "Controller.onClick e=" + e); }
+				switch(e) {
+					case R.id.event_attribute: {
+						if (!optionsOut) {
+							optionsContainer.startAnimation(popOutAnimation);
+							optionsOut = true;
+							return;
+						}
+					}
+				}
+				((Sample) getActivity()).inform(e, null);
 			}
 		};
 		for (int resourceId: new int[]{
@@ -90,14 +83,41 @@ public class Controller extends Base {
 		}) {
 			view.findViewById(resourceId).setOnClickListener(clickListener);
 		}
+		final GestureDetector moveD = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+			private Bundle bundle = new Bundle();
+			@Override public boolean onFling(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				//Log.d(TAG, "onFling: " + e1 + e2);
+				return true;
+			}
+			@Override public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				bundle.putDouble("px", distanceX);
+				bundle.putDouble("py", distanceY);
+				inform(R.id.event_scroll, bundle);
+				return true;
+			}
+		});
+		final ScaleGestureDetector scaleD = new ScaleGestureDetector(getActivity(), new ScaleGestureDetector.SimpleOnScaleGestureListener(){
+			private double scale = 1.0;
+			private Bundle bundle = new Bundle();
+			@Override public boolean onScale(ScaleGestureDetector detector) {
+				scale *= detector.getScaleFactor();
+				inform(R.id.event_scale, bundle);
+				return true;
+			}
+			@Override public void onScaleEnd(ScaleGestureDetector detector) {
+				scale *= detector.getScaleFactor();
+				bundle.putDouble("scale", scale);
+				inform(R.id.event_scale_end, bundle);
+				scale = 1.0;
+			}
+		});
+		scaleD.setQuickScaleEnabled(true);
 		view.findViewById(R.id.drag).setOnTouchListener(new View.OnTouchListener() {
-			@Override public boolean onTouch(View v, MotionEvent event) {
-				if (DEBUG) { Log.d(TAG, "Controller.onTouch event=" + event); }
-				switch (MotionEventCompat.getActionMasked(event)) {
-					case MotionEvent.ACTION_MOVE: {
-						break;
-					}
-				}
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (optionsOut) return false;
+				moveD.onTouchEvent(event);
+				scaleD.onTouchEvent(event);
 				return true;
 			}
 		});
