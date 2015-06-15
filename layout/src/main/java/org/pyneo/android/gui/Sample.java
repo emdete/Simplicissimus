@@ -36,7 +36,7 @@ public class Sample
 			});
 		}
 
-		popUpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_up);
+		popUpAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_out);
 		popInAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_pop_in);
 	}
 
