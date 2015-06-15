@@ -22,13 +22,12 @@ public class Controller extends Base {
 	static final private boolean DEBUG = Sample.DEBUG;
 	private Animation popOutAnimation;
 	private Animation popInAnimation;
-	private View optionsContainer;
 	private boolean optionsOut;
 
 	public void inform(int event, Bundle extra) {
 		if (DEBUG) Log.d(TAG, "Controller.inform event=" + event + ", extra=" + extra);
 		if (optionsOut) {
-			optionsContainer.startAnimation(popInAnimation);
+			getActivity().findViewById(R.id.attributes).startAnimation(popInAnimation);
 			optionsOut = false;
 		}
 		switch (event) {
@@ -41,26 +40,26 @@ public class Controller extends Base {
 	}
 
 	@Override public void onAttach(Activity activity) {
-		if (DEBUG) { Log.d(TAG, "Controller.onAttach"); }
+		if (DEBUG) Log.d(TAG, "Controller.onAttach");
 		super.onAttach(activity);
 	}
 
 	@Override public void onCreate(Bundle bundle) {
-		if (DEBUG) { Log.d(TAG, "Controller.onCreate"); }
+		if (DEBUG) Log.d(TAG, "Controller.onCreate");
 		super.onCreate(bundle);
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (DEBUG) { Log.d(TAG, "Controller.onCreateView"); }
+		if (DEBUG) Log.d(TAG, "Controller.onCreateView");
 		View view = inflater.inflate(R.layout.controller, container, false);
 		View.OnClickListener clickListener = new View.OnClickListener() {
 			@Override public void onClick(View view) {
 				int e = view.getId();
-				if (DEBUG) { Log.d(TAG, "Controller.onClick e=" + e); }
+				if (DEBUG) Log.d(TAG, "Controller.onClick e=" + e);
 				switch(e) {
 					case R.id.event_attribute: {
 						if (!optionsOut) {
-							optionsContainer.startAnimation(popOutAnimation);
+							getActivity().findViewById(R.id.attributes).startAnimation(popOutAnimation);
 							optionsOut = true;
 							return;
 						}
@@ -126,9 +125,13 @@ public class Controller extends Base {
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "Controller.onActivityCreated"); }
-		optionsContainer = getActivity().findViewById(R.id.attributes);
+		if (DEBUG) Log.d(TAG, "Controller.onActivityCreated");
 		popOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_open);
 		popInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.attributes_close);
+	}
+
+	@Override public void onDestroyView() {
+		super.onDestroyView();
+		if (DEBUG) Log.d(TAG, "Controller.onDestroyView");
 	}
 }
