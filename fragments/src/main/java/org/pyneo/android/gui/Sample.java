@@ -32,12 +32,6 @@ public class Sample extends Activity {
 				new Poi(),
 				new Dashboard(),
 		};
-		FragmentManager fragmentManager = getFragmentManager();
-		FragmentTransaction tx = fragmentManager.beginTransaction();
-		for (Base b: fragments) {
-			tx.add(R.id.base, b, b.getClass().getSimpleName());
-		}
-		tx.commit();
 	}
 
 	@Override protected void onStart () {
@@ -53,6 +47,12 @@ public class Sample extends Activity {
 	@Override protected void onResume () {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "Sample.onResume");
+		FragmentManager fragmentManager = getFragmentManager();
+		FragmentTransaction tx = fragmentManager.beginTransaction();
+		for (Base b: fragments) {
+			tx.add(R.id.base, b, b.getClass().getSimpleName());
+		}
+		tx.commit();
 	}
 
 	@Override protected void onPause () {
