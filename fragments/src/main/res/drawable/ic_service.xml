@@ -6,7 +6,7 @@
     android:viewportHeight="48">
 
     <path
-        android:fillColor="#000000"
+        android:fillColor="@color/textPrimary"
         android:pathData="M34.8231010437,26.3582420349
 C35.142162323,24.0814285278,35.5678977966,21.8898448944,35.7691841125,21.4880561829
 C36.3212051391,20.3861370087,38.5124511718,20.6116409302,38.5124511718,21.7703685761
@@ -42,13 +42,13 @@ C36.9750366212,44.99401474,36.8781318666,45.1084594726,34.0411071778,45.10845947
 C31.338842392,45.1084594726,31.0884666443,44.8709907531,31.0884666443,42.308101654
 Z" />
     <path
-        android:strokeColor="#000000"
+        android:strokeColor="@color/textPrimary"
         android:strokeWidth="2.70000005"
         android:strokeLineCap="round"
         android:pathData="M3.03470540047,32.95297622680664
 C10.8186340332,20.7124481201,28.8191547394,27.754776001,43.2822227478,5.505023956298828" />
     <path
-        android:strokeColor="#000000"
+        android:strokeColor="@color/textPrimary"
         android:strokeWidth="2.70000005"
         android:strokeLineCap="round"
         android:pathData="M11.8521814346,25.984325408935547
