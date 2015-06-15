@@ -3,25 +3,25 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/event_track_list"
-		android:icon="@drawable/ic_track_list"
+		android:icon="@drawable/ic_menu_track_list"
 		android:showAsAction="always"
 		android:title="@string/menu_track_list"
 		/>
 	<item
 		android:id="@+id/event_poi_list"
-		android:icon="@drawable/ic_poi_list"
+		android:icon="@drawable/ic_menu_poi_list"
 		android:showAsAction="ifRoom"
 		android:title="@string/menu_poi_list"
 		/>
 	<item
 		android:id="@+id/event_map_list"
-		android:icon="@drawable/ic_map_list"
+		android:icon="@drawable/ic_menu_map_list"
 		android:showAsAction="always"
 		android:title="@string/menu_map_list"
 		/>
 	<item
 		android:id="@+id/event_pre_load"
-		android:icon="@drawable/ic_preload"
+		android:icon="@drawable/ic_menu_preload"
 		android:showAsAction="ifRoom"
 		android:title="@string/menu_pre_load"
 		/>
