@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_pre_load">Pre load map</string>
+	<string name="menu_map_list">List of map providers</string>
+	<string name="menu_poi_list">List of POIs</string>
+	<string name="menu_track_list">List of tracks</string>
+</resources>

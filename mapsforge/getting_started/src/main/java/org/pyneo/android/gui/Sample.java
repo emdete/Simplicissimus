@@ -29,14 +29,13 @@ public class Sample extends Activity {
 	static final String TAG = "org.pyneo.sample";
 	private static final boolean DEBUG = true;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE = "/storage/sdcard1/germany.map";
+	private static final String MAPFILE = "/storage/sdcard1/mapsforge/germany.map";
 	// leave out when not wanted:
-	private static final String THEMEFILE = "/storage/sdcard1/theme.xml";
+	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
 	TileCache tileCache;
-	TileRendererLayer tileRendererLayer;
-	Context context;
+	TileRendererLayer tileLayer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,23 +53,22 @@ public class Sample extends Activity {
 		setContentView(mapView);
 		mapView.setClickable(true);
 		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(false);
-		//mapView.getMapZoomControls().setShowMapZoomControls(false);
-		//mapView.getMapZoomControls().setZoomLevelMin((byte)8);
-		//mapView.getMapZoomControls().setZoomLevelMax((byte)20);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)8);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)22);
 		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		tileCache = AndroidUtil.createTileCache(this, "mapcache", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
-		MapDataStore mapDataStore = new MapFile(new File(MAPFILE));
-		tileRendererLayer = new TileRendererLayer(tileCache, mapDataStore, mapView.getModel().mapViewPosition,
+		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
 		try {
-			tileRendererLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
+			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
 		}
 		catch (FileNotFoundException ignore) {
-			tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
+			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		}
-		mapView.getLayerManager().getLayers().add(tileRendererLayer);
+		mapView.getLayerManager().getLayers().add(tileLayer);
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		// warp to 'unter den linden'
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
@@ -104,8 +102,8 @@ public class Sample extends Activity {
 	protected void onStop() {
 		super.onStop();
 		if (DEBUG) Log.d(TAG, "onStop");
-		mapView.getLayerManager().getLayers().remove(tileRendererLayer);
-		tileRendererLayer.onDestroy();
+		mapView.getLayerManager().getLayers().remove(tileLayer);
+		tileLayer.onDestroy();
 	}
 
 	@Override
