@@ -1,7 +1,5 @@
 package org.pyneo.android.gui;
 
-import android.location.Location;
-import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.CellLocation;
 import android.app.Service;
@@ -10,25 +8,14 @@ import android.os.Message;
 import android.telephony.CellInfo;
 import android.content.Context;
 import android.os.Looper;
-import android.content.ContentValues;
 import android.os.Process;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Handler;
 import android.util.Log;
 import android.os.Binder;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.List;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
-import java.util.Vector;
-import org.apache.http.HttpStatus;
-import org.xmlpull.v1.XmlPullParserException;
 
 public class BackgroundService extends Service {
 	private static final String TAG = BackgroundService.class.getName();
