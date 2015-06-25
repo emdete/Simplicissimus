@@ -59,6 +59,7 @@ public class Map extends Base {
 		if (current >= 0) tileLayers[current].setVisible(false);
 		current = newlayer;
 		if (current >= 0) tileLayers[current].setVisible(true);
+		mapView.getLayerManager().redrawLayers();
 	}
 
 	public void inform(int event, Bundle extra) {
