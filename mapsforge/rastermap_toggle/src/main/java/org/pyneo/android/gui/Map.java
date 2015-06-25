@@ -140,7 +140,7 @@ public class Map extends Base {
 
 	@Override public void onResume() {
 		super.onResume();
-		//((TileDownloadLayer)tileLayers[0]).onResume();
+		((TileDownloadLayer)tileLayers[0]).onResume();
 		((TileDownloadLayer)tileLayers[2]).onResume();
 	}
 
@@ -150,7 +150,7 @@ public class Map extends Base {
 	}
 
 	@Override public void onPause() {
-		//((TileDownloadLayer)tileLayers[0]).onPause();
+		((TileDownloadLayer)tileLayers[0]).onPause();
 		((TileDownloadLayer)tileLayers[2]).onPause();
 	}
 
