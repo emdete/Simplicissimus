@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class Sample extends FragmentActivity {
-	static final String TAG = Sample.class.getName();
+	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
 	static final String POSITION = "position";
 

@@ -10,9 +10,9 @@ import android.hardware.ConsumerIrManager;
 import android.hardware.ConsumerIrManager.CarrierFrequencyRange;
 
 public class Sample extends Activity {
-	static final String TAG = Sample.class.getName();
+	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	ConsumerIrManager irManager = null;
 
 	Context context;

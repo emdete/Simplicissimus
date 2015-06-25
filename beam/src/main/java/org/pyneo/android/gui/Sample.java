@@ -27,9 +27,9 @@ import java.util.Arrays;
 
 public class Sample extends Activity implements CreateNdefMessageCallback {
 	// see https://developer.android.com/guide/topics/connectivity/nfc/nfc.html#p2p
-	static final String TAG = Sample.class.getName();
+	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	static final String uri = "xmpp://mdt@emdete.de";
 
 	Context context;

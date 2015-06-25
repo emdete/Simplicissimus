@@ -9,9 +9,9 @@ import android.widget.Button;
 import org.pyneo.android.contacts.Person;
 
 public class Sample extends Activity {
-	static final String TAG = Sample.class.getName();
+	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 
 	Context context;
 

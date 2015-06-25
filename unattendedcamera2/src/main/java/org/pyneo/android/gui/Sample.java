@@ -12,9 +12,9 @@ import android.content.Intent;
 import android.net.Uri;
 
 public class Sample extends Activity {
-	private static final String TAG = Sample.class.getName();
+	private static final String TAG = "org.pyneo.sample";
 	private static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	private Context context;
 	private UnattendedPic unattendedPic = new UnattendedPic() {
 		public void captured(File file) {

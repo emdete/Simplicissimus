@@ -27,9 +27,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import java.util.Hashtable;
 
 public class Sample extends Activity {
-	static final String TAG = Sample.class.getName();
+	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	static final QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 	static final int QR_CODE_SIZE = 1000;
 	static final private String protocol = "xmpp";

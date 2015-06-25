@@ -168,10 +168,10 @@ public class Map extends Base {
 
 	@Override public void onDestroy() {
 		//for (TileLayer tileLayer: tileLayers) tileLayer.destroy();
-		//for (TileCache tileCache: tileCaches) tileCache.destroy();
-		//mapView.getModel().mapViewPosition.destroy();
-		//mapView.destroy();
-		//AndroidGraphicFactory.clearResourceMemoryCache();
+		for (TileCache tileCache: tileCaches) tileCache.destroy();
+		mapView.getModel().mapViewPosition.destroy();
+		mapView.destroy();
+		AndroidGraphicFactory.clearResourceMemoryCache();
 	}
 
 	static class SatTileSource extends OnlineTileSource {

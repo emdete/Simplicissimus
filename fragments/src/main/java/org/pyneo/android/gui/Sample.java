@@ -10,9 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class Sample extends Activity {
-	static public final String TAG = Sample.class.getName();
+	static public final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	private Base[] fragments;
 
 	@Override public void onCreate (Bundle savedInstanceState) {

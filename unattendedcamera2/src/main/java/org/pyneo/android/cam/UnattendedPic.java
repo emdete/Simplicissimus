@@ -30,7 +30,7 @@ import java.util.concurrent.Semaphore;
 public class UnattendedPic {
 	private static final String TAG = UnattendedPic.class.getName();
 	private static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
+	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 	private static class ImageSaver implements Runnable {
 		private final Image mImage;
 		private final File mFile;

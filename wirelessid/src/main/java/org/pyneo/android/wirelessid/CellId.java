@@ -26,9 +26,9 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> {
-	private static final String TAG = CellId.class.getName();
+	private static final String TAG = "org.pyneo.sample";
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 
 	private List<CellInfo> cellInfoList;
 	private int i = 0;

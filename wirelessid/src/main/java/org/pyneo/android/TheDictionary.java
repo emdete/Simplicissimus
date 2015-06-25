@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class TheDictionary implements JSONStreamAware, JSONAware, Map<String,Object> {
-	private static final String TAG = TheDictionary.class.getName();
+	private static final String TAG = "org.pyneo.sample";
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 
 	private Map<String,Object> map = new JSONObject();
 

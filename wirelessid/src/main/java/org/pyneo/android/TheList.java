@@ -12,9 +12,9 @@ import java.io.Writer;
 import java.util.Iterator;
 
 public class TheList implements JSONStreamAware, JSONAware, Iterable<TheDictionary> {
-	private static final String TAG = TheList.class.getName();
+	private static final String TAG = "org.pyneo.sample";
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 
 	private java.util.AbstractList<TheDictionary> list = new JSONArray();
 

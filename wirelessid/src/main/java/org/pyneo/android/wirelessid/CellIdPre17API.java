@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CellIdPre17API implements Iterator<TheDictionary>, Iterable<TheDictionary> {
-	private static final String TAG = CellIdPre17API.class.getName();
+	private static final String TAG = "org.pyneo.sample";
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
 
 	private int mcc = NeighboringCellInfo.UNKNOWN_CID; // NeighboringCellInfo.UNKNOWN_CID == -1
 	private int mnc = NeighboringCellInfo.UNKNOWN_CID;
