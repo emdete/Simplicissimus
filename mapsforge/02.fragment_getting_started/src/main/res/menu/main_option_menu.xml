@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:id="@+id/event_vector"
-		android:title="@string/menu_vector"
-		/>
-	<item
-		android:id="@+id/event_mapquest"
-		android:title="@string/menu_mapquest"
-		/>
-	<item
-		android:id="@+id/event_satellite"
-		android:title="@string/menu_satellite"
-		/>
 </menu>

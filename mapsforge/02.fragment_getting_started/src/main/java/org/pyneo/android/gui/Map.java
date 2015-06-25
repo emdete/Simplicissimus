@@ -51,7 +51,7 @@ public class Map extends Base {
 	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
-	TileLayer tileLayer;
+	TileRendererLayer tileLayer;
 	TileCache tileCache;
 
 	@Override public void onCreate(Bundle bundle) {
@@ -60,38 +60,45 @@ public class Map extends Base {
 		AndroidGraphicFactory.createInstance(getActivity().getApplication());
 		mapView = new MapView(getActivity());
 		//
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		mapView.setClickable(true);
+		mapView.getMapScaleBar().setVisible(true);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
 		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
-		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
-			false, true, AndroidGraphicFactory.INSTANCE);
-		try {
-			((TileRendererLayer)tileLayer).setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
-		}
-		catch (FileNotFoundException ignore) {
-			((TileRendererLayer)tileLayer).setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
-		}
-		mapView.getLayerManager().getLayers().add(tileLayer);
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
 		//mapView.getModel().init(preferencesFacade);
-		mapView.setClickable(true);
-		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getMapZoomControls().setShowMapZoomControls(true);
-		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
-		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
-		// warp to 'unter den linden'
-		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 		return mapView;
 	}
 
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "Map.onActivityCreated"); }
+	@Override public void onStart() {
+		super.onStart();
+		if (DEBUG) { Log.d(TAG, "Map.onStart"); }
+		// warp to 'unter den linden'
+		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
+		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
+			false, true, AndroidGraphicFactory.INSTANCE);
+		try {
+			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
+		}
+		catch (FileNotFoundException ignore) {
+			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
+		}
+		mapView.getLayerManager().getLayers().add(tileLayer);
+	}
+
+	@Override public void onStop() {
+		super.onStop();
+		if (DEBUG) Log.d(TAG, "onStop");
+		mapView.getLayerManager().getLayers().remove(tileLayer);
+		tileLayer.onDestroy();
 	}
 
 	@Override public void onDestroy() {
