@@ -50,8 +50,25 @@ public class Sample extends Activity {
 		AndroidGraphicFactory.createInstance(getApplication());
 		mapView = new MapView(this);
 		setContentView(mapView);
-		tileCache = AndroidUtil.createTileCache(this, "mapcache", mapView.getModel().displayModel.getTileSize(),
-			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		mapView.setClickable(true);
+		mapView.getMapScaleBar().setVisible(true);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		// create a tile cache of suitable size
+		tileCache = AndroidUtil.createTileCache(this, "mapcache",
+			mapView.getModel().displayModel.getTileSize(), 1f,
+			mapView.getModel().frameBufferModel.getOverdrawFactor());
+	}
+
+	@Override protected void onStart() {
+		super.onStart();
+		if (DEBUG) Log.d(TAG, "onStart");
+		// warp to 'unter den linden'
+		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
 		try {
@@ -61,58 +78,16 @@ public class Sample extends Activity {
 			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		}
 		mapView.getLayerManager().getLayers().add(tileLayer);
-		mapView.setClickable(true);
-		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getMapZoomControls().setShowMapZoomControls(true);
-		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
-		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
-		// warp to 'unter den linden'
-		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (DEBUG) Log.d(TAG, "onStart");
-	}
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		if (DEBUG) Log.d(TAG, "onRestart");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (DEBUG) Log.d(TAG, "onResume");
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (DEBUG) Log.d(TAG, "onPause");
-	}
-
-	@Override
-	protected void onStop() {
+	@Override protected void onStop() {
 		super.onStop();
 		if (DEBUG) Log.d(TAG, "onStop");
 		mapView.getLayerManager().getLayers().remove(tileLayer);
 		tileLayer.onDestroy();
 	}
 
-	@Override
-	protected void onSaveInstanceState(Bundle bundle) {
-		super.onSaveInstanceState(bundle);
-		if (DEBUG) Log.d(TAG, "onSaveInstanceState bundle=" + bundle);
-	}
-
-	@Override
-	protected void onDestroy() {
+	@Override protected void onDestroy() {
 		super.onDestroy();
 		if (DEBUG) Log.d(TAG, "onDestroy");
 		tileCache.destroy();
