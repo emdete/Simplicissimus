@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_satellite">Satellite</string>
+	<string name="menu_mapquest">MapQuest</string>
+	<string name="menu_vector">Vector</string>
+</resources>

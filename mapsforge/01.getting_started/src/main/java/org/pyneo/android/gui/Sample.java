@@ -34,11 +34,10 @@ public class Sample extends Activity {
 	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
-	TileCache tileCache;
 	TileRendererLayer tileLayer;
+	TileCache tileCache;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (DEBUG) Log.d(TAG, "onCreate");
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -51,13 +50,6 @@ public class Sample extends Activity {
 		AndroidGraphicFactory.createInstance(getApplication());
 		mapView = new MapView(this);
 		setContentView(mapView);
-		mapView.setClickable(true);
-		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getMapZoomControls().setShowMapZoomControls(true);
-		mapView.getMapZoomControls().setZoomLevelMin((byte)8);
-		mapView.getMapZoomControls().setZoomLevelMax((byte)22);
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		tileCache = AndroidUtil.createTileCache(this, "mapcache", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
@@ -69,6 +61,13 @@ public class Sample extends Activity {
 			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		}
 		mapView.getLayerManager().getLayers().add(tileLayer);
+		mapView.setClickable(true);
+		mapView.getMapScaleBar().setVisible(true);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		// warp to 'unter den linden'
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
