@@ -60,20 +60,19 @@ public class Map extends Base {
 		AndroidGraphicFactory.createInstance(getActivity().getApplication());
 		mapView = new MapView(getActivity());
 		//
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		mapView.setClickable(true);
 		mapView.getMapScaleBar().setVisible(true);
 		mapView.setBuiltInZoomControls(true);
 		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
 		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
 		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
-		//mapView.getModel().init(preferencesFacade);
 		return mapView;
 	}
 
@@ -102,6 +101,7 @@ public class Map extends Base {
 	}
 
 	@Override public void onDestroy() {
+		super.onDestroy();
 		if (DEBUG) { Log.d(TAG, "Map.onDestroy"); }
 		tileCache.destroy();
 		mapView.getModel().mapViewPosition.destroy();

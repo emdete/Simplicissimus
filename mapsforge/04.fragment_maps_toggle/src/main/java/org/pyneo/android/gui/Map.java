@@ -55,41 +55,38 @@ public class Map extends Base {
 	protected int current = -1;
 	Layers layers;
 
-	void enable(int newlayer) {
-		if (current >= 0) tileLayers[current].setVisible(false);
-		current = newlayer;
-		if (current >= 0) tileLayers[current].setVisible(true);
-		mapView.getLayerManager().redrawLayers();
-	}
-
-	public void inform(int event, Bundle extra) {
-		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
-		switch (event) {
-			case R.id.event_mapquest:
-				enable(0);
-				break;
-			case R.id.event_vector:
-				enable(1);
-				break;
-			case R.id.event_satellite:
-				enable(2);
-				break;
+	@Override public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		if (DEBUG) { Log.d(TAG, "Map.onCreate"); }
+		AndroidGraphicFactory.createInstance(getActivity().getApplication());
+		mapView = new MapView(getActivity());
+		//
+		mapView.setClickable(true);
+		mapView.getMapScaleBar().setVisible(true);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		for (int i=0;i<tileCaches.length;i++) {
+			tileCaches[i]= AndroidUtil.createTileCache(getActivity(),
+				"mapcache-" + i, mapView.getModel().displayModel.getTileSize(), 1f,
+				mapView.getModel().frameBufferModel.getOverdrawFactor());
 		}
 	}
 
-	@Override public void onAttach(Activity activity) {
-		if (DEBUG) { Log.d(TAG, "Map.onAttach"); }
-		super.onAttach(activity);
+	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
+		return mapView;
 	}
 
-	@Override public void onCreate(Bundle bundle) {
-		if (DEBUG) { Log.d(TAG, "Map.onCreate"); }
-		super.onCreate(bundle);
-		AndroidGraphicFactory.createInstance(getActivity().getApplication());
-		mapView = new MapView(getActivity());
+	@Override public void onStart() {
+		super.onStart();
+		if (DEBUG) { Log.d(TAG, "Map.onStart"); }
+		// warp to 'unter den linden'
+		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		// mapquest:
-		tileCaches[0]= AndroidUtil.createTileCache(getActivity(), "mapcache-0", mapView.getModel().displayModel.getTileSize(),
-			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		OnlineTileSource onlineTileSource = new OnlineTileSource(new String[]{"otile1.mqcdn.com", "otile2.mqcdn.com", "otile3.mqcdn.com", "otile4.mqcdn.com"}, 80){
 			@Override public URL getTileUrl(Tile tile) throws MalformedURLException {
 				URL url = super.getTileUrl(tile);
@@ -112,8 +109,6 @@ public class Map extends Base {
 		mapView.getLayerManager().getLayers().add(tileLayers[0]);
 		tileLayers[0].setVisible(false);
 		// vector:
-		tileCaches[1] = AndroidUtil.createTileCache(getActivity(), "mapcache-1", mapView.getModel().displayModel.getTileSize(),
-			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		tileLayers[1] = new TileRendererLayer(tileCaches[1], new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
 		try {
@@ -125,50 +120,41 @@ public class Map extends Base {
 		mapView.getLayerManager().getLayers().add(tileLayers[1]);
 		tileLayers[1].setVisible(false);
 		// satellite
-		tileCaches[2]= AndroidUtil.createTileCache(getActivity(), "mapcache-2", mapView.getModel().displayModel.getTileSize(),
-			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		tileLayers[2] = new TileDownloadLayer(tileCaches[2], mapView.getModel().mapViewPosition, new SatTileSource(), AndroidGraphicFactory.INSTANCE);
 		mapView.getLayerManager().getLayers().add(tileLayers[2]);
 		tileLayers[2].setVisible(false);
-	}
-
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
-		//mapView.getModel().init(preferencesFacade);
-		mapView.setClickable(true);
-		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getMapZoomControls().setShowMapZoomControls(true);
-		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
-		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
-		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 		enable(0);
-		return mapView;
-	}
-
-	@Override public void onResume() {
-		super.onResume();
-		for (TileLayer tileLayer: tileLayers)
-			if (tileLayer instanceof TileDownloadLayer)
-				((TileDownloadLayer)tileLayer).onResume();
-	}
-
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "Map.onActivityCreated"); }
 	}
 
 	@Override public void onPause() {
+		super.onPause();
+		if (DEBUG) Log.d(TAG, "onPause");
 		for (TileLayer tileLayer: tileLayers)
 			if (tileLayer instanceof TileDownloadLayer)
 				((TileDownloadLayer)tileLayers[current]).onPause();
 	}
 
+	@Override public void onResume() {
+		super.onResume();
+		if (DEBUG) Log.d(TAG, "onResume");
+		for (TileLayer tileLayer: tileLayers)
+			if (tileLayer instanceof TileDownloadLayer)
+				((TileDownloadLayer)tileLayer).onResume();
+	}
+
+	@Override public void onStop() {
+		super.onStop();
+		if (DEBUG) Log.d(TAG, "onStop");
+		mapView.getLayerManager().getLayers().clear();
+	}
+
 	@Override public void onDestroy() {
-		//for (TileLayer tileLayer: tileLayers) tileLayer.destroy();
-		for (TileCache tileCache: tileCaches) tileCache.destroy();
+		super.onDestroy();
+		if (DEBUG) { Log.d(TAG, "Map.onDestroy"); }
+		for (TileLayer tileLayer: tileLayers)
+			tileLayer.onDestroy();
+		for (TileCache tileCache: tileCaches)
+			tileCache.destroy();
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
 		AndroidGraphicFactory.clearResourceMemoryCache();
@@ -210,6 +196,28 @@ public class Map extends Base {
 			URL url = new URL(getProtocol(), getHostName(), port, stringBuilder.toString());
 			Log.d(TAG, "getTileUrl url=" + url);
 			return url;
+		}
+	}
+
+	void enable(int newlayer) {
+		if (current >= 0) tileLayers[current].setVisible(false);
+		current = newlayer;
+		if (current >= 0) tileLayers[current].setVisible(true);
+		mapView.getLayerManager().redrawLayers();
+	}
+
+	public void inform(int event, Bundle extra) {
+		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
+		switch (event) {
+			case R.id.event_mapquest:
+				enable(0);
+				break;
+			case R.id.event_vector:
+				enable(1);
+				break;
+			case R.id.event_satellite:
+				enable(2);
+				break;
 		}
 	}
 }

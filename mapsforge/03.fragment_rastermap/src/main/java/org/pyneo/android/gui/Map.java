@@ -98,13 +98,13 @@ public class Map extends Base {
 		super.onStop();
 		if (DEBUG) Log.d(TAG, "onStop");
 		mapView.getLayerManager().getLayers().remove(tileLayer);
-		tileLayer.onDestroy();
+		tileLayer.onPause();
 	}
 
 	@Override public void onDestroy() {
 		super.onDestroy();
 		if (DEBUG) { Log.d(TAG, "Map.onDestroy"); }
-		tileLayer.onPause();
+		tileLayer.onDestroy();
 		tileCache.destroy();
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
