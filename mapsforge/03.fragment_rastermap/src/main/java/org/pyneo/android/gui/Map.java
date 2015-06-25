@@ -43,34 +43,34 @@ public class Map extends Base {
 	protected TileDownloadLayer tileLayer;
 	protected TileCache tileCache;
 
-	public void inform(int event, Bundle extra) {
-		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
-	}
-
-	@Override public void onAttach(Activity activity) {
-		if (DEBUG) { Log.d(TAG, "Map.onAttach"); }
-		super.onAttach(activity);
-	}
-
 	@Override public void onCreate(Bundle bundle) {
-		if (DEBUG) { Log.d(TAG, "Map.onCreate"); }
 		super.onCreate(bundle);
+		if (DEBUG) { Log.d(TAG, "Map.onCreate"); }
 		AndroidGraphicFactory.createInstance(getActivity().getApplication());
+		mapView = new MapView(getActivity());
+		//
+		mapView.setClickable(true);
+		mapView.getMapScaleBar().setVisible(true);
+		mapView.setBuiltInZoomControls(true);
+		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
+		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
+		mapView.getMapZoomControls().setShowMapZoomControls(true);
+		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
+			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
-		mapView = new MapView(getActivity());
-		//mapView.getModel().init(preferencesFacade);
-		mapView.setClickable(true);
-		mapView.getMapScaleBar().setVisible(true);
-		mapView.setBuiltInZoomControls(true);
-		mapView.getMapZoomControls().setShowMapZoomControls(true);
-		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
-		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
-		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
-			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
+		return mapView;
+	}
+
+	@Override public void onStart() {
+		super.onStart();
+		if (DEBUG) { Log.d(TAG, "Map.onStart"); }
+		// warp to 'unter den linden'
+		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		OnlineTileSource onlineTileSource = new OnlineTileSource(new String[]{"otile1.mqcdn.com", "otile2.mqcdn.com", "otile3.mqcdn.com", "otile4.mqcdn.com"}, 80){
 			@Override public URL getTileUrl(Tile tile) throws MalformedURLException {
 				URL url = super.getTileUrl(tile);
@@ -91,26 +91,27 @@ public class Map extends Base {
 			;
 		tileLayer = new TileDownloadLayer(tileCache, mapView.getModel().mapViewPosition, onlineTileSource, AndroidGraphicFactory.INSTANCE);
 		mapView.getLayerManager().getLayers().add(tileLayer);
-		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
-		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
-		return mapView;
-	}
-
-	@Override public void onResume() {
-		super.onResume();
 		tileLayer.onResume();
 	}
 
-	@Override public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if (DEBUG) { Log.d(TAG, "Map.onActivityCreated"); }
+	@Override public void onStop() {
+		super.onStop();
+		if (DEBUG) Log.d(TAG, "onStop");
+		mapView.getLayerManager().getLayers().remove(tileLayer);
+		tileLayer.onDestroy();
 	}
 
-	void cleanup() {
+	@Override public void onDestroy() {
+		super.onDestroy();
+		if (DEBUG) { Log.d(TAG, "Map.onDestroy"); }
 		tileLayer.onPause();
 		tileCache.destroy();
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
 		AndroidGraphicFactory.clearResourceMemoryCache();
+	}
+
+	public void inform(int event, Bundle extra) {
+		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
 	}
 }
