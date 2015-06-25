@@ -55,26 +55,24 @@ public class Map extends Base {
 	protected int current = -1;
 	Layers layers;
 
+	void enable(int newlayer) {
+		if (current >= 0) tileLayers[current].setVisible(false);
+		current = newlayer;
+		if (current >= 0) tileLayers[current].setVisible(true);
+	}
+
 	public void inform(int event, Bundle extra) {
 		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
-		int newlayer = -1;
 		switch (event) {
 			case R.id.event_mapquest:
-				newlayer = 0;
+				enable(0);
 				break;
 			case R.id.event_vector:
-				newlayer = 1;
+				enable(1);
 				break;
 			case R.id.event_satellite:
-				newlayer = 2;
+				enable(2);
 				break;
-		}
-		if (newlayer != 0) {
-			if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onPause();
-			current = newlayer;
-			mapView.getLayerManager().getLayers().clear();
-			mapView.getLayerManager().getLayers().add(tileLayers[current]);
-			if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onResume();
 		}
 	}
 
@@ -110,6 +108,8 @@ public class Map extends Base {
 			.setZoomLevelMin((byte) 2)
 			;
 		tileLayers[0] = new TileDownloadLayer(tileCaches[0], mapView.getModel().mapViewPosition, onlineTileSource, AndroidGraphicFactory.INSTANCE);
+		mapView.getLayerManager().getLayers().add(tileLayers[0]);
+		tileLayers[0].setVisible(false);
 		// vector:
 		tileCaches[1] = AndroidUtil.createTileCache(getActivity(), "mapcache-1", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
@@ -121,10 +121,14 @@ public class Map extends Base {
 		catch (FileNotFoundException ignore) {
 			((TileRendererLayer)tileLayers[1]).setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		}
+		mapView.getLayerManager().getLayers().add(tileLayers[1]);
+		tileLayers[1].setVisible(false);
 		// satellite
 		tileCaches[2]= AndroidUtil.createTileCache(getActivity(), "mapcache-2", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		tileLayers[2] = new TileDownloadLayer(tileCaches[2], mapView.getModel().mapViewPosition, new SatTileSource(), AndroidGraphicFactory.INSTANCE);
+		mapView.getLayerManager().getLayers().add(tileLayers[2]);
+		tileLayers[2].setVisible(false);
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -137,17 +141,17 @@ public class Map extends Base {
 		mapView.getMapZoomControls().setZoomLevelMin((byte)2);
 		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
 		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		// activate one:
-		current = 0;
-		mapView.getLayerManager().getLayers().add(tileLayers[current]);
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+		enable(0);
 		return mapView;
 	}
 
 	@Override public void onResume() {
 		super.onResume();
-		if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onResume();
+		for (TileLayer tileLayer: tileLayers)
+			if (tileLayer instanceof TileDownloadLayer)
+				((TileDownloadLayer)tileLayer).onResume();
 	}
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -156,7 +160,9 @@ public class Map extends Base {
 	}
 
 	@Override public void onPause() {
-		if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onPause();
+		for (TileLayer tileLayer: tileLayers)
+			if (tileLayer instanceof TileDownloadLayer)
+				((TileDownloadLayer)tileLayers[current]).onPause();
 	}
 
 	@Override public void onDestroy() {
