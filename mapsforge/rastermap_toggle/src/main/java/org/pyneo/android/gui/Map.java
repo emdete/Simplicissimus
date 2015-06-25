@@ -52,23 +52,29 @@ public class Map extends Base {
 	protected MapView mapView;
 	protected TileLayer[] tileLayers = new TileLayer[3];
 	protected TileCache[] tileCaches = new TileCache[3];
+	protected int current = -1;
 	Layers layers;
 
 	public void inform(int event, Bundle extra) {
 		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
+		int newlayer = -1;
 		switch (event) {
 			case R.id.event_mapquest:
-				mapView.getLayerManager().getLayers().clear();
-				mapView.getLayerManager().getLayers().add(tileLayers[0]);
+				newlayer = 0;
 				break;
 			case R.id.event_vector:
-				mapView.getLayerManager().getLayers().clear();
-				mapView.getLayerManager().getLayers().add(tileLayers[1]);
+				newlayer = 1;
 				break;
 			case R.id.event_satellite:
-				mapView.getLayerManager().getLayers().clear();
-				mapView.getLayerManager().getLayers().add(tileLayers[2]);
+				newlayer = 2;
 				break;
+		}
+		if (newlayer != 0) {
+			if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onPause();
+			current = newlayer;
+			mapView.getLayerManager().getLayers().clear();
+			mapView.getLayerManager().getLayers().add(tileLayers[current]);
+			if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onResume();
 		}
 	}
 
@@ -132,7 +138,8 @@ public class Map extends Base {
 		mapView.getMapZoomControls().setZoomLevelMax((byte)18);
 		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		// activate one:
-		mapView.getLayerManager().getLayers().add(tileLayers[2]);
+		current = 0;
+		mapView.getLayerManager().getLayers().add(tileLayers[current]);
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 		return mapView;
@@ -140,8 +147,7 @@ public class Map extends Base {
 
 	@Override public void onResume() {
 		super.onResume();
-		((TileDownloadLayer)tileLayers[0]).onResume();
-		((TileDownloadLayer)tileLayers[2]).onResume();
+		if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onResume();
 	}
 
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
@@ -150,8 +156,7 @@ public class Map extends Base {
 	}
 
 	@Override public void onPause() {
-		((TileDownloadLayer)tileLayers[0]).onPause();
-		((TileDownloadLayer)tileLayers[2]).onPause();
+		if (tileLayers[current] instanceof TileDownloadLayer) ((TileDownloadLayer)tileLayers[current]).onPause();
 	}
 
 	@Override public void onDestroy() {
