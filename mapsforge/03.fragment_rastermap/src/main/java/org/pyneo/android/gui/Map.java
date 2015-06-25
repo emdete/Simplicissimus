@@ -39,9 +39,9 @@ import org.mapsforge.core.model.Tile;
 public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
-	protected MapView mapView;
-	protected TileDownloadLayer tileLayer;
-	protected TileCache tileCache;
+	MapView mapView;
+	TileDownloadLayer tileLayer;
+	TileCache tileCache;
 
 	@Override public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);

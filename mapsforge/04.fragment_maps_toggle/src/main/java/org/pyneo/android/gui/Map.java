@@ -49,11 +49,10 @@ public class Map extends Base {
 	private static final String MAPFILE = "/storage/sdcard1/mapsforge/germany.map";
 	// leave out when not wanted:
 	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
-	protected MapView mapView;
-	protected TileLayer[] tileLayers = new TileLayer[3];
-	protected TileCache[] tileCaches = new TileCache[3];
-	protected int current = -1;
-	Layers layers;
+	MapView mapView;
+	TileLayer[] tileLayers = new TileLayer[3];
+	TileCache[] tileCaches = new TileCache[3];
+	int current = -1;
 
 	@Override public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -146,6 +145,9 @@ public class Map extends Base {
 		super.onStop();
 		if (DEBUG) Log.d(TAG, "onStop");
 		mapView.getLayerManager().getLayers().clear();
+		for (TileLayer tileLayer: tileLayers)
+			if (tileLayer instanceof TileDownloadLayer)
+				((TileDownloadLayer)tileLayer).onPause();
 	}
 
 	@Override public void onDestroy() {
