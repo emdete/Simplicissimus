@@ -57,7 +57,7 @@ public class SimplestMapViewer extends MapViewerTemplate {
 
 	@Override
 	protected File getMapFileDirectory() {
-		return new File("/storage/sdcard1");
+		return new File("/storage/sdcard1/mapsforge");
 	}
 
 	/**

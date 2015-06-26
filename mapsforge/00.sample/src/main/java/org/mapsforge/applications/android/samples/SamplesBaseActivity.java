@@ -107,7 +107,7 @@ public abstract class SamplesBaseActivity extends MapViewerTemplate implements S
 
 	@Override
 	protected File getMapFileDirectory() {
-		return new File("/storage/sdcard1");
+		return new File("/storage/sdcard1/mapsforge");
 	}
 
 	/**

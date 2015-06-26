@@ -124,7 +124,7 @@ public class ItemDetailFragment extends Fragment {
 	}
 
 	protected File getMapFileDirectory() {
-		return new File("/storage/sdcard1");
+		return new File("/storage/sdcard1/mapsforge");
 	}
 
 	protected String getMapFileName() {
