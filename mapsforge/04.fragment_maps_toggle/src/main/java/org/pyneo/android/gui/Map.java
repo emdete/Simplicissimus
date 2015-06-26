@@ -36,6 +36,7 @@ import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.model.common.PreferencesFacade;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.reader.MapDataStore;
+import org.mapsforge.map.reader.MultiMapDataStore;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
@@ -46,7 +47,8 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE = "/storage/sdcard1/mapsforge/germany.map";
+	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
+	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
 	// leave out when not wanted:
 	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 	MapView mapView;
@@ -108,8 +110,11 @@ public class Map extends Base {
 		mapView.getLayerManager().getLayers().add(tileLayers[0]);
 		tileLayers[0].setVisible(false);
 		// vector:
-		tileLayers[1] = new TileRendererLayer(tileCaches[1], new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
+		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
+		tileLayers[1] = new TileRendererLayer(tileCaches[1], multiMapDataStore, mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
+		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
+		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
 		try {
 			((TileRendererLayer)tileLayers[1]).setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
 		}
