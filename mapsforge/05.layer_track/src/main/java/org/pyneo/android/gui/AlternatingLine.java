@@ -56,11 +56,15 @@ public class AlternatingLine extends Polyline {
 		}
 	}
 
+	public synchronized Paint getPaintStroke() {
+		throw new RuntimeException("getPaintStroke called with no parms"); // i hate to do that, it's just to validate my code
+	}
+
 	public synchronized Paint getPaintStroke(LatLong from, LatLong to) {
 		Paint paint = AndroidGraphicFactory.INSTANCE.createPaint();
 		paint.setStrokeWidth(16);
 		paint.setStyle(Style.STROKE);
-		int alt = ((TrackGpxParser.TrackPoint)to).getAltitude();
+		int alt = to == null? 0: ((TrackGpxParser.TrackPoint)to).getAltitude();
 		switch (alt % 3) {
 			case 0: paint.setColor(AndroidGraphicFactory.INSTANCE.createColor(Color.GREEN)); break;
 			case 1: paint.setColor(AndroidGraphicFactory.INSTANCE.createColor(Color.RED)); break;
