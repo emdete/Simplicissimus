@@ -1,5 +1,6 @@
 package org.pyneo.android.gui;
 
+import android.util.Log;
 import org.mapsforge.core.graphics.Canvas;
 import org.mapsforge.core.graphics.Color;
 import org.mapsforge.core.graphics.GraphicFactory;
@@ -12,11 +13,12 @@ import org.mapsforge.core.model.Point;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.overlay.Polyline;
-
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class AlternatingLine extends Polyline {
+	static final private String TAG = Sample.TAG;
+	static final private boolean DEBUG = Sample.DEBUG;
 	GraphicFactory graphicFactory;
 
 	public AlternatingLine(GraphicFactory graphicFactory) {
@@ -25,6 +27,7 @@ public class AlternatingLine extends Polyline {
 	}
 
 	@Override public synchronized void draw(BoundingBox boundingBox, byte zoomLevel, Canvas canvas, Point topLeftPoint) {
+		if (DEBUG) { Log.d(TAG, "AlternatingLine.draw"); }
 		if (getLatLongs().isEmpty()) {
 			return;
 		}
@@ -33,26 +36,18 @@ public class AlternatingLine extends Polyline {
 			return;
 		}
 		long mapSize = MercatorProjection.getMapSize(zoomLevel, displayModel.getTileSize());
-		java.util.Map<Paint,Path> paints = new HashMap<Paint,Path>();
 		LatLong from = iterator.next();
 		while (iterator.hasNext()) {
 			LatLong to = iterator.next();
-			Paint paint = getPaintStroke(from, to);
-			Path path = paints.get(paint);
-			if (path == null) {
-				path = graphicFactory.createPath();
-				paints.put(paint, path);
+			if (boundingBox.contains(to) || boundingBox.contains(from)) {
+				Paint paint = getPaintStroke(from, to);
+				int x1 = (int) (MercatorProjection.longitudeToPixelX(from.longitude, mapSize) - topLeftPoint.x);
+				int y1 = (int) (MercatorProjection.latitudeToPixelY(from.latitude, mapSize) - topLeftPoint.y);
+				int x2 = (int) (MercatorProjection.longitudeToPixelX(to.longitude, mapSize) - topLeftPoint.x);
+				int y2 = (int) (MercatorProjection.latitudeToPixelY(to.latitude, mapSize) - topLeftPoint.y);
+				canvas.drawLine(x1, y1, x2, y2, paint);
 			}
-			float x = (float) (MercatorProjection.longitudeToPixelX(from.longitude, mapSize) - topLeftPoint.x);
-			float y = (float) (MercatorProjection.latitudeToPixelY(from.latitude, mapSize) - topLeftPoint.y);
-			path.moveTo(x, y);
-			x = (float) (MercatorProjection.longitudeToPixelX(to.longitude, mapSize) - topLeftPoint.x);
-			y = (float) (MercatorProjection.latitudeToPixelY(to.latitude, mapSize) - topLeftPoint.y);
-			path.lineTo(x, y);
 			from = to;
-		}
-		for (Paint paint: paints.keySet()) {
-			canvas.drawPath(paints.get(paint), paint);
 		}
 	}
 
