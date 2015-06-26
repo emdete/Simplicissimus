@@ -46,6 +46,7 @@ import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.model.common.PreferencesFacade;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.reader.MapDataStore;
+import org.mapsforge.map.reader.MultiMapDataStore;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
@@ -56,9 +57,10 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE = "/storage/sdcard1/mapsforge/germany.map";
+	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
+	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
 	// get the track from a gpx file (adjust for your needs):
-	private static final String GPXFILE = "/sdcard/tabulae/export/track52.gpx";
+	private static final String GPXFILE = "/sdcard/tabulae/export/track50.gpx";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -106,8 +108,11 @@ public class Map extends Base {
 		// warp to track
 		mapView.getModel().mapViewPosition.setCenter(latLong);
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
-		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
+		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
+		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
+		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
+		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
 		tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayer);
 		mapView.getLayerManager().getLayers().add(polyline);
