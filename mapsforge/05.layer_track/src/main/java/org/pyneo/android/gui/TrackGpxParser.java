@@ -142,5 +142,9 @@ public class TrackGpxParser implements Iterable<TrackGpxParser.TrackPoint> {
 		public void setAltitude(int altitude) {
 			this.altitude = altitude;
 		}
+
+		public int getAltitude() {
+			return altitude;
+		}
 	}
 }

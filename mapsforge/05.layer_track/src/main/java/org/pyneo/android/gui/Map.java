@@ -63,7 +63,7 @@ public class Map extends Base {
 	MapView mapView;
 	TileRendererLayer tileLayer;
 	TileCache tileCache;
-	Polyline polyline;
+	AlternatingLine polyline;
 
 	@Override public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -81,11 +81,7 @@ public class Map extends Base {
 		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 
-		Paint paint = AndroidGraphicFactory.INSTANCE.createPaint();
-		paint.setColor(AndroidGraphicFactory.INSTANCE.createColor(Color.RED));
-		paint.setStrokeWidth(16);
-		paint.setStyle(Style.STROKE);
-		polyline = new Polyline(paint, AndroidGraphicFactory.INSTANCE);
+		polyline = new AlternatingLine(AndroidGraphicFactory.INSTANCE);
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
