@@ -1,16 +1,21 @@
 package org.pyneo.android.gui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.Point;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.cache.TileCache;
+import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.reader.MultiMapDataStore;
@@ -26,8 +31,6 @@ public class Map extends Base {
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
 	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
 	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
-	// leave out when not wanted:
-	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -66,13 +69,20 @@ public class Map extends Base {
 			false, true, AndroidGraphicFactory.INSTANCE);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
-		try {
-			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
-		}
-		catch (FileNotFoundException ignore) {
-			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
-		}
+		tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayer);
+		Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(getResources().getDrawable(R.drawable.poi_black));
+		bitmap.incrementRefCount();
+		Marker marker = new Marker(new LatLong(52.517037, 13.38886), bitmap, 0, -bitmap.getHeight() / 2) {
+			@Override public boolean onTap(LatLong geoPoint, Point viewPosition, Point tapPoint) {
+				if (contains(viewPosition, tapPoint)) {
+					Toast.makeText(getActivity(), "The Marker was tapped " + geoPoint.toString(), Toast.LENGTH_SHORT).show();
+					return true;
+				}
+				return false;
+			}
+		};
+		mapView.getLayerManager().getLayers().add(marker);
 	}
 
 	@Override public void onStop() {
