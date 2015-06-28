@@ -76,7 +76,7 @@ public class Map extends Base {
 		Marker marker = new Marker(new LatLong(52.517037, 13.38886), bitmap, 0, -bitmap.getHeight() / 2) {
 			@Override public boolean onTap(LatLong geoPoint, Point viewPosition, Point tapPoint) {
 				if (contains(viewPosition, tapPoint)) {
-					Toast.makeText(getActivity(), "The Marker was tapped " + geoPoint.toString(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "Unter den Linden Ecke Friedrichstraße, Berlin", Toast.LENGTH_SHORT).show();
 					return true;
 				}
 				return false;
