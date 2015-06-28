@@ -47,6 +47,7 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
+	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
 	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
 	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
 	// leave out when not wanted:
@@ -89,6 +90,7 @@ public class Map extends Base {
 			false, true, AndroidGraphicFactory.INSTANCE);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
+		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE0)), false, false);
 		try {
 			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
 		}
