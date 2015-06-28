@@ -1,8 +1,5 @@
-Layout sample app
-=================
+Track
+=====
 
-	-	provide a simple layout of a list of buttons
-
-	-	provide a animation to show more buttons
-
-	-	use vectos instead of raster images
+This app shows a track on the map. It allows to have different colors on one
+track to visualize attributes like speed or heartbeat.

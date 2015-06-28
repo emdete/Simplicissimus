@@ -1,8 +1,5 @@
-Layout sample app
-=================
+Fragment
+========
 
-	-	provide a simple layout of a list of buttons
-
-	-	provide a animation to show more buttons
-
-	-	use vectos instead of raster images
+This sample just uses mapforge in a fragment (which is quite commen these
+days).

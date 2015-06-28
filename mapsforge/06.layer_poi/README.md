@@ -1,8 +1,4 @@
-Layout sample app
-=================
+POI
+===
 
-	-	provide a simple layout of a list of buttons
-
-	-	provide a animation to show more buttons
-
-	-	use vectos instead of raster images
+This app shows a POI.
