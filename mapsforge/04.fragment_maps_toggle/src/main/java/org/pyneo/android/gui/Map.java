@@ -1,47 +1,30 @@
 package org.pyneo.android.gui;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
 import org.mapsforge.core.model.LatLong;
-import org.mapsforge.core.model.MapPosition;
 import org.mapsforge.core.model.Tile;
-import org.mapsforge.map.android.AndroidPreferences;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
-import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.download.TileDownloadLayer;
 import org.mapsforge.map.layer.download.tilesource.OnlineTileSource;
-import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
-import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.layer.TileLayer;
-import org.mapsforge.map.model.common.PreferencesFacade;
-import org.mapsforge.map.model.MapViewPosition;
-import org.mapsforge.map.reader.MapDataStore;
 import org.mapsforge.map.reader.MultiMapDataStore;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
-import org.mapsforge.map.rendertheme.XmlRenderTheme;
-import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 
 public class Map extends Base {
 	static final private String TAG = Sample.TAG;
@@ -52,8 +35,8 @@ public class Map extends Base {
 	// leave out when not wanted:
 	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 	MapView mapView;
-	TileLayer[] tileLayers = new TileLayer[3];
-	TileCache[] tileCaches = new TileCache[3];
+	TileLayer[] tileLayers = new TileLayer[4];
+	TileCache[] tileCaches = new TileCache[4];
 	int current = -1;
 
 	@Override public void onCreate(Bundle bundle) {
@@ -127,6 +110,10 @@ public class Map extends Base {
 		tileLayers[2] = new TileDownloadLayer(tileCaches[2], mapView.getModel().mapViewPosition, new SatTileSource(), AndroidGraphicFactory.INSTANCE);
 		mapView.getLayerManager().getLayers().add(tileLayers[2]);
 		tileLayers[2].setVisible(false);
+		// satellite
+		tileLayers[3] = new TileDownloadLayer(tileCaches[3], mapView.getModel().mapViewPosition, new OATileSource(), AndroidGraphicFactory.INSTANCE);
+		mapView.getLayerManager().getLayers().add(tileLayers[3]);
+		tileLayers[3].setVisible(false);
 		enable(0);
 	}
 
@@ -165,6 +152,27 @@ public class Map extends Base {
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
 		AndroidGraphicFactory.clearResourceMemoryCache();
+	}
+
+	static class OATileSource extends OnlineTileSource {
+		OATileSource() {
+			super(new String[]{"s3.outdooractive.com", }, 80);
+			setAlpha(false);
+			setBaseUrl("/portal/map/");
+			setExtension("png");
+			setName("Outdoor Active");
+			setParallelRequestsLimit(4);
+			setProtocol("http");
+			setTileSize(256);
+			setZoomLevelMax((byte)17);
+			setZoomLevelMin((byte)8);
+		}
+
+		@Override public URL getTileUrl(Tile tile) throws MalformedURLException {
+			URL url = super.getTileUrl(tile);
+			Log.d(TAG, "getTileUrl url=" + url);
+			return url;
+		}
 	}
 
 	static class SatTileSource extends OnlineTileSource {
@@ -224,6 +232,9 @@ public class Map extends Base {
 				break;
 			case R.id.event_satellite:
 				enable(2);
+				break;
+			case R.id.event_outdooractive:
+				enable(3);
 				break;
 		}
 	}

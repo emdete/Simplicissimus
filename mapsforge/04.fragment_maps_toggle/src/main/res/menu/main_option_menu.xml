@@ -13,4 +13,8 @@
 		android:id="@+id/event_satellite"
 		android:title="@string/menu_satellite"
 		/>
+	<item
+		android:id="@+id/event_outdooractive"
+		android:title="@string/menu_outdooractive"
+		/>
 </menu>
