@@ -67,4 +67,18 @@ public class AlternatingLine extends Polyline {
 		}
 		return paint;
 	}
+
+	static class BB extends BoundingBox {
+		public BB(double minLatitude, double minLongitude, double maxLatitude, double maxLongitude) {
+			super(minLatitude, minLongitude, maxLatitude, maxLongitude);
+		}
+
+		public BoundingBox extend(LatLong latLong) {
+			return new BB(
+				Math.min(minLatitude, latLong.latitude),
+				Math.min(minLongitude, latLong.longitude),
+				Math.max(maxLatitude, latLong.latitude),
+				Math.max(maxLongitude, latLong.longitude));
+		}
+	}
 }
