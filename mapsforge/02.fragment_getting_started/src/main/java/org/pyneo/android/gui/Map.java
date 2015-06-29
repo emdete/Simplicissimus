@@ -50,8 +50,6 @@ public class Map extends Base {
 	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
 	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
 	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
-	// leave out when not wanted:
-	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -91,12 +89,7 @@ public class Map extends Base {
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE0)), false, false);
-		try {
-			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
-		}
-		catch (FileNotFoundException ignore) {
-			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
-		}
+		tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayer);
 	}
 
