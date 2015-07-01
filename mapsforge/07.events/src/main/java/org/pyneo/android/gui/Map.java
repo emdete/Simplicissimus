@@ -7,12 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.MapPosition;
 import org.mapsforge.core.model.Point;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
+import org.mapsforge.map.model.FrameBufferModel;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.model.common.Observer;
 import org.mapsforge.map.reader.MapFile;
@@ -70,7 +72,19 @@ public class Map extends Base {
 				}
 			}
 		});
-		final MapViewPosition mapViewPosition = mapView.getModel().mapViewPosition;
+		final FrameBufferModel frameBufferModel = mapView.getModel().frameBufferModel;
+		frameBufferModel.addObserver(new Observer() {
+			MapPosition lastMapPosition;
+			@Override public void onChange() {
+				MapPosition currentMapPosition = frameBufferModel.getMapPosition();
+				if (!currentMapPosition.equals(lastMapPosition)) {
+					Bundle extra = new Bundle();
+					extra.putSerializable("position", currentMapPosition);
+					inform(0, extra);
+					lastMapPosition = currentMapPosition;
+				}
+			}
+		});
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

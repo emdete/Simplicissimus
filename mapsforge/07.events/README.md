@@ -1,5 +1,4 @@
-Fragment
-========
+Event
+=====
 
-This sample just uses mapforge in a fragment (which is quite commen these
-days).
+This sample shows how to receive various events from mapforge.
