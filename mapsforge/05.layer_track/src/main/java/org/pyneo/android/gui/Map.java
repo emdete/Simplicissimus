@@ -101,6 +101,7 @@ public class Map extends Base {
 				latLong = trackPoint;
 				latLongs.add(latLong);
 			}
+			// add: mapView.getModel().mapViewPosition.setMapPosition(new MapPosition(bb.getCenterPoint(), LatLongUtils.zoomForBounds(dimension, bb, mapView.getModel().displayModel.getTileSize())));
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Map.onStart", e);

@@ -32,8 +32,6 @@ public class Map extends Base {
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
 	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
 	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
-	// leave out when not wanted:
-	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 	MapView mapView;
 	TileLayer[] tileLayers = new TileLayer[4];
 	TileCache[] tileCaches = new TileCache[4];
@@ -98,12 +96,7 @@ public class Map extends Base {
 			false, true, AndroidGraphicFactory.INSTANCE);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
-		try {
-			((TileRendererLayer)tileLayers[1]).setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
-		}
-		catch (FileNotFoundException ignore) {
-			((TileRendererLayer)tileLayers[1]).setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
-		}
+		((TileRendererLayer)tileLayers[1]).setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayers[1]);
 		tileLayers[1].setVisible(false);
 		// satellite

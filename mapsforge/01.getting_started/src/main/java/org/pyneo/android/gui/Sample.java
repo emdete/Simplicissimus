@@ -30,8 +30,6 @@ public class Sample extends Activity {
 	private static final boolean DEBUG = true;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
 	private static final String MAPFILE = "/storage/sdcard1/mapsforge/germany.map";
-	// leave out when not wanted:
-	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -71,12 +69,7 @@ public class Sample extends Activity {
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		tileLayer = new TileRendererLayer(tileCache, new MapFile(new File(MAPFILE)), mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
-		try {
-			tileLayer.setXmlRenderTheme(new ExternalRenderTheme(new File(THEMEFILE)));
-		}
-		catch (FileNotFoundException ignore) {
-			tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
-		}
+		tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayer);
 	}
 
