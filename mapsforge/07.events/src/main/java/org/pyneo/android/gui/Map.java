@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.mapsforge.core.model.Dimension;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.MapPosition;
 import org.mapsforge.core.model.Point;
@@ -75,13 +76,21 @@ public class Map extends Base {
 		final FrameBufferModel frameBufferModel = mapView.getModel().frameBufferModel;
 		frameBufferModel.addObserver(new Observer() {
 			MapPosition lastMapPosition;
+			Dimension lastDimension;
 			@Override public void onChange() {
 				MapPosition currentMapPosition = frameBufferModel.getMapPosition();
-				if (!currentMapPosition.equals(lastMapPosition)) {
+				if (currentMapPosition != null && !currentMapPosition.equals(lastMapPosition)) {
 					Bundle extra = new Bundle();
 					extra.putSerializable("position", currentMapPosition);
 					inform(0, extra);
 					lastMapPosition = currentMapPosition;
+				}
+				Dimension currentDimension = frameBufferModel.getDimension();
+				if (currentDimension != null && !currentDimension.equals(lastDimension)) {
+					Bundle extra = new Bundle();
+					extra.putSerializable("position", currentDimension);
+					inform(0, extra);
+					lastDimension = currentDimension;
 				}
 			}
 		});
@@ -99,12 +108,14 @@ public class Map extends Base {
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
-		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition,
-			false, true, AndroidGraphicFactory.INSTANCE) {
+		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE) {
 			@Override public boolean onLongPress(LatLong tapLatLong, Point thisXY, Point tapXY) {
 				return Map.this.onLongPress(tapLatLong, thisXY, tapXY);
 			}
-			};
+			@Override public void onActionUp(LatLong latLong, Point xy, long eventTime, boolean moveThresholdReached) {
+				return Map.this.onActionUp(latLong, xy, eventTime, moveThresholdReached);
+			}
+		};
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE0)), false, false);
@@ -126,6 +137,10 @@ public class Map extends Base {
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
 		AndroidGraphicFactory.clearResourceMemoryCache();
+	}
+
+	public void onActionUp(LatLong latLong, Point xy, long eventTime, boolean moveThresholdReached) {
+		if (DEBUG) { Log.d(TAG, "Map.onActionUp latLong=" + latLong + ", xy=" + xy + ", eventTime=" + eventTime + ", moveThresholdReached=" + moveThresholdReached); }
 	}
 
 	public boolean onLongPress(LatLong tapLatLong, Point thisXY, Point tapXY) {

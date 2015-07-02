@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="event_scale" type="id" />
+	<item name="event_scale_end" type="id" />
+	<item name="event_scroll" type="id" />
+</resources>
