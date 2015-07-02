@@ -110,14 +110,17 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	 *            the {@code Paint} used to stroke the circle that represents the accuracy of the current location (might be null).
 	 */
 	public ThreeStateLocationOverlay(Context context, MapViewPosition mapViewPosition, Paint circleFill,
-							 Paint circleStroke) {
+							Paint circleStroke) {
 		super();
 
 		this.mapViewPosition = mapViewPosition;
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-		map_needle_pinned = new Marker(null, AndroidGraphicFactory.convertToBitmap(context.getResources().getDrawable(R.drawable.map_needle_pinned)), 0, 0);
-		map_needle = new Marker(null, AndroidGraphicFactory.convertToBitmap(context.getResources().getDrawable(R.drawable.map_needle)), 0, 0);
-		map_needle_off = new Marker(null, AndroidGraphicFactory.convertToBitmap(context.getResources().getDrawable(R.drawable.map_needle_off)), 0, 0);
+		map_needle_pinned = new Marker(null, AndroidGraphicFactory.convertToBitmap(
+			context.getResources().getDrawable(R.drawable.map_needle_pinned)), 0, 0);
+		map_needle = new Marker(null, AndroidGraphicFactory.convertToBitmap(
+			context.getResources().getDrawable(R.drawable.map_needle)), 0, 0);
+		map_needle_off = new Marker(null, AndroidGraphicFactory.convertToBitmap(
+			context.getResources().getDrawable(R.drawable.map_needle_off)), 0, 0);
 		marker = map_needle_off;
 		circle = new Circle(null, 0, circleFill, circleStroke);
 	}
