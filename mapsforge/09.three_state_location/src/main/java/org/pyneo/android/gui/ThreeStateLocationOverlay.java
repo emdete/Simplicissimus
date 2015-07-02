@@ -78,10 +78,9 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	protected final LocationManager locationManager;
 	protected final MapViewPosition mapViewPosition;
 	protected Marker marker;
-	protected float bearing;
 	protected final Marker map_needle_pinned;
 	protected final Marker map_needle_off;
-	protected final Marker map_needle;
+	protected final RotatingMarker map_needle;
 	protected boolean myLocationEnabled;
 	protected boolean snapToLocationEnabled;
 
@@ -117,7 +116,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		map_needle_pinned = new Marker(null, AndroidGraphicFactory.convertToBitmap(
 			context.getResources().getDrawable(R.drawable.map_needle_pinned)), 0, 0);
-		map_needle = new Marker(null, AndroidGraphicFactory.convertToBitmap(
+		map_needle = new RotatingMarker(null, AndroidGraphicFactory.convertToBitmap(
 			context.getResources().getDrawable(R.drawable.map_needle)), 0, 0);
 		map_needle_off = new Marker(null, AndroidGraphicFactory.convertToBitmap(
 			context.getResources().getDrawable(R.drawable.map_needle_off)), 0, 0);
@@ -141,7 +140,6 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		if (!myLocationEnabled) {
 			return;
 		}
-
 		circle.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
 		marker.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
 	}
@@ -225,7 +223,8 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 						marker = map_needle_pinned;
 					}
 					else {
-						bearing = location.getBearing();
+						float bearing = location.getBearing();
+						map_needle.setDegree(bearing);
 						marker = map_needle;
 					}
 				}
