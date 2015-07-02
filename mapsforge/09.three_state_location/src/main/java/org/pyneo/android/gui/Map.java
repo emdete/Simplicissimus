@@ -35,10 +35,10 @@ public class Map extends Base {
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
 	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
 	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
-	MapView mapView;
-	TileLayer[] tileLayers = new TileLayer[4];
-	TileCache[] tileCaches = new TileCache[4];
-	int current = -1;
+	private MapView mapView;
+	private TileLayer[] tileLayers = new TileLayer[4];
+	private TileCache[] tileCaches = new TileCache[4];
+	private int current = -1;
 	private ThreeStateLocationOverlay myLocationOverlay;
 
 	@Override public void onCreate(Bundle bundle) {

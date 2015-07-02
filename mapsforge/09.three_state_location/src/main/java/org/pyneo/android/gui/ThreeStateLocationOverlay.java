@@ -49,31 +49,22 @@ import org.mapsforge.map.model.MapViewPosition;
  * (otherwise no DisplayModel is set).
  */
 public class ThreeStateLocationOverlay extends Layer implements LocationListener {
-	static final private String TAG = Sample.TAG;
-	static final private boolean DEBUG = Sample.DEBUG;
+	static final protected String TAG = Sample.TAG;
+	static final protected boolean DEBUG = Sample.DEBUG;
 
-	private static final GraphicFactory GRAPHIC_FACTORY = AndroidGraphicFactory.INSTANCE;
-	private float minDistance = 0.0f;
-	private long minTime = 0;
+	protected static final GraphicFactory GRAPHIC_FACTORY = AndroidGraphicFactory.INSTANCE;
+	protected float minDistance = 0.0f;
+	protected long minTime = 0;
 
-	/**
-	 * @param location
-	 *            the location whose geographical coordinates should be converted.
-	 * @return a new LatLong with the geographical coordinates taken from the given location.
-	 */
-	public static LatLong locationToLatLong(Location location) {
-		return new LatLong(location.getLatitude(), location.getLongitude(), true);
-	}
-
-	private static Paint getDefaultCircleFill() {
+	protected static Paint getDefaultCircleFill() {
 		return getPaint(GRAPHIC_FACTORY.createColor(48, 0, 0, 255), 0, Style.FILL);
 	}
 
-	private static Paint getDefaultCircleStroke() {
+	protected static Paint getDefaultCircleStroke() {
 		return getPaint(GRAPHIC_FACTORY.createColor(160, 0, 0, 255), 2, Style.STROKE);
 	}
 
-	private static Paint getPaint(int color, int strokeWidth, Style style) {
+	protected static Paint getPaint(int color, int strokeWidth, Style style) {
 		Paint paint = GRAPHIC_FACTORY.createPaint();
 		paint.setColor(color);
 		paint.setStrokeWidth(strokeWidth);
@@ -81,17 +72,18 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		return paint;
 	}
 
-	private boolean centerAtNextFix;
-	private final Circle circle;
-	private Location lastLocation;
-	private final LocationManager locationManager;
-	private final MapViewPosition mapViewPosition;
-	private Marker marker;
-	private final Marker map_needle_pinned;
-	private final Marker map_needle_off;
-	private final Marker map_needle;
-	private boolean myLocationEnabled;
-	private boolean snapToLocationEnabled;
+	protected boolean centerAtNextFix;
+	protected final Circle circle;
+	protected Location lastLocation;
+	protected final LocationManager locationManager;
+	protected final MapViewPosition mapViewPosition;
+	protected Marker marker;
+	protected float bearing;
+	protected final Marker map_needle_pinned;
+	protected final Marker map_needle_off;
+	protected final Marker map_needle;
+	protected boolean myLocationEnabled;
+	protected boolean snapToLocationEnabled;
 
 	/**
 	 * Constructs a new {@code ThreeStateLocationOverlay} with the default circle paints.
@@ -208,13 +200,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 
 	@Override
 	public void onLocationChanged(Location location) {
-
 		synchronized (this) {
-			lastLocation = location;
-
-			LatLong latLong = locationToLatLong(location);
-
-
 			long age = (SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos()) / 1000000;
 			if (age > 5 || !location.hasAccuracy() || location.getAccuracy() == 0) {
 				if (DEBUG) { Log.d(TAG, "off: age=" + age); }
@@ -223,6 +209,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 			}
 			else {
 				float accuracy = location.getAccuracy();
+				if (DEBUG) { Log.d(TAG, "circle: accuracy=" + accuracy); }
 				circle.setRadius(accuracy);
 				if (!location.hasSpeed() || !location.hasBearing()) {
 					marker = map_needle_pinned;
@@ -235,22 +222,20 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 						marker = map_needle_pinned;
 					}
 					else {
-						float bearing = location.getBearing();
+						bearing = location.getBearing();
 						marker = map_needle;
 					}
 				}
 			}
-
-
+			LatLong latLong = new LatLong(location.getLatitude(), location.getLongitude(), true);
 			marker.setLatLong(latLong);
 			circle.setLatLong(latLong);
-
 			if (centerAtNextFix || snapToLocationEnabled) {
 				centerAtNextFix = false;
 				mapViewPosition.setCenter(latLong);
 			}
-
 			requestRedraw();
+			lastLocation = location;
 		}
 	}
 
@@ -274,7 +259,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	 * You should call this before calling {@link ThreeStateLocationOverlay#enable(boolean)}.
 	 */
 	public void setMinDistance(float minDistance) {
-		minDistance = minDistance;
+		this.minDistance = minDistance;
 	}
 
 	/**
@@ -282,7 +267,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	 * You should call this before calling {@link ThreeStateLocationOverlay#enable(boolean)}.
 	 */
 	public void setMinTime(long minTime) {
-		minTime = minTime;
+		this.minTime = minTime;
 	}
 
 	/**
@@ -290,10 +275,10 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	 *            whether the map should be centered at each received location fix.
 	 */
 	public synchronized void setSnapToLocationEnabled(boolean snapToLocationEnabled) {
-		snapToLocationEnabled = snapToLocationEnabled;
+		this.snapToLocationEnabled = snapToLocationEnabled;
 	}
 
-	private synchronized boolean enableBestAvailableProvider() {
+	protected synchronized boolean enableBestAvailableProvider() {
 		disable();
 
 		boolean result = false;
