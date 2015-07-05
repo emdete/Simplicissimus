@@ -55,24 +55,8 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	protected static final GraphicFactory GRAPHIC_FACTORY = AndroidGraphicFactory.INSTANCE;
 	protected float minDistance = 0.0f;
 	protected long minTime = 0;
-
-	protected static Paint getDefaultCircleFill() {
-		return getPaint(GRAPHIC_FACTORY.createColor(48, 0, 0, 255), 0, Style.FILL);
-	}
-
-	protected static Paint getDefaultCircleStroke() {
-		return getPaint(GRAPHIC_FACTORY.createColor(160, 0, 0, 255), 2, Style.STROKE);
-	}
-
-	protected static Paint getPaint(int color, int strokeWidth, Style style) {
-		Paint paint = GRAPHIC_FACTORY.createPaint();
-		paint.setColor(color);
-		paint.setStrokeWidth(strokeWidth);
-		paint.setStyle(style);
-		return paint;
-	}
-
 	protected boolean centerAtNextFix;
+	protected boolean showAccuracy;
 	protected final Circle circle;
 	protected Location lastLocation;
 	protected final LocationManager locationManager;
@@ -111,7 +95,6 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	public ThreeStateLocationOverlay(Context context, MapViewPosition mapViewPosition, Paint circleFill,
 							Paint circleStroke) {
 		super();
-
 		this.mapViewPosition = mapViewPosition;
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		map_needle_pinned = new Marker(null, AndroidGraphicFactory.convertToBitmap(
@@ -121,6 +104,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		map_needle_off = new Marker(null, AndroidGraphicFactory.convertToBitmap(
 			context.getResources().getDrawable(R.drawable.map_needle_off)), 0, 0);
 		marker = map_needle_off;
+		showAccuracy = true;
 		circle = new Circle(null, 0, circleFill, circleStroke);
 	}
 
@@ -140,7 +124,9 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		if (!myLocationEnabled) {
 			return;
 		}
-		circle.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
+		if (showAccuracy) {
+			circle.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
+		}
 		marker.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
 	}
 
@@ -202,8 +188,8 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 	@Override
 	public void onLocationChanged(Location location) {
 		synchronized (this) {
-			long age = (SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos()) / 1000000;
-			if (age > 5 || !location.hasAccuracy() || location.getAccuracy() == 0) {
+			long age = (SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos()) / 1000000000;
+			if (age > 3 || !location.hasAccuracy() || location.getAccuracy() == 0) {
 				if (DEBUG) { Log.d(TAG, "off: age=" + age); }
 				marker = map_needle_off;
 				circle.setRadius(0);
@@ -293,5 +279,21 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 		}
 		myLocationEnabled = result;
 		return result;
+	}
+
+	protected static Paint getDefaultCircleFill() {
+		return getPaint(GRAPHIC_FACTORY.createColor(48, 0, 0, 255), 0, Style.FILL);
+	}
+
+	protected static Paint getDefaultCircleStroke() {
+		return getPaint(GRAPHIC_FACTORY.createColor(160, 0, 0, 255), 2, Style.STROKE);
+	}
+
+	protected static Paint getPaint(int color, int strokeWidth, Style style) {
+		Paint paint = GRAPHIC_FACTORY.createPaint();
+		paint.setColor(color);
+		paint.setStrokeWidth(strokeWidth);
+		paint.setStyle(style);
+		return paint;
 	}
 }

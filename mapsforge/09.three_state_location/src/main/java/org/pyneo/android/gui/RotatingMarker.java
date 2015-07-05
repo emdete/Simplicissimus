@@ -1,7 +1,8 @@
 package org.pyneo.android.gui;
 /*
- * Copyright © 2015 Himal Rai
- * Copyright © 2015 M. Dietrich
+ * Copyright © 2015 Himal Rai (initial implementation from https://groups.google.com/forum/#!topic/mapsforge-dev/BS-b3q5XAa0)
+ * Copyright © 2015 Emux (valuable hints)
+ * Copyright © 2015 M. Dietrich (cleanup, simplification)
  */
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -57,9 +58,6 @@ class RotatingMarker extends Marker {
 		}
 		android.graphics.Canvas androidCanvas = AndroidGraphicFactory.getCanvas(canvas);
 		androidCanvas.save();
-		// How is the pivot value calculated ?
-		px = (float) canvas.getWidth()/2;
-		py = (float) canvas.getHeight()/2;
 		androidCanvas.rotate(degree, (float) (pixelX - topLeftPoint.x), (float) (pixelY - topLeftPoint.y));
 		canvas.drawBitmap(getBitmap(), left, top);
 		androidCanvas.restore();
