@@ -79,10 +79,10 @@ public class Map extends Base {
 			1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
 		DisplayModel displayModel = mapView.getModel().displayModel;
 		displayModel.setBackgroundColor(0xffff0000); // red background, defaults to 0xffeeeeee
-		displayModel.setFixedTileSize(2000); // change the tile size, defaults to 256
-		displayModel.setMaxTextWidthFactor(0.3f); // defaults to .7f
-		displayModel.setTileSizeMultiple(100); // defaults to 64
-		displayModel.setUserScaleFactor(1.3f); // scaled map, defaults to 1.0f
+		displayModel.setFixedTileSize(512); // change the tile size, defaults to 256
+		// displayModel.setMaxTextWidthFactor(0.3f); // defaults to .7f
+		// displayModel.setTileSizeMultiple(100); // defaults to 64
+		// displayModel.setUserScaleFactor(1.5f); // scaled map, defaults to 1.0f
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,6 +99,7 @@ public class Map extends Base {
 		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
 		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition,
 			false, true, AndroidGraphicFactory.INSTANCE);
+		// tileLayer.setTextScale(1.5f);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE0)), false, false);
