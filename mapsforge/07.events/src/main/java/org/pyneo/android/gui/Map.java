@@ -38,7 +38,7 @@ public class Map extends Base {
 
 	@Override public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		if (DEBUG) { Log.d(TAG, "Map.onCreate"); }
+		if (DEBUG) Log.d(TAG, "Map.onCreate");
 		AndroidGraphicFactory.createInstance(getActivity().getApplication());
 		mapView = new MapView(getActivity());
 		//
@@ -78,42 +78,50 @@ public class Map extends Base {
 			MapPosition lastMapPosition;
 			Dimension lastDimension;
 			@Override public void onChange() {
+				Bundle extra = new Bundle();
 				MapPosition currentMapPosition = frameBufferModel.getMapPosition();
 				if (currentMapPosition != null && !currentMapPosition.equals(lastMapPosition)) {
-					Bundle extra = new Bundle();
 					extra.putSerializable("position", currentMapPosition);
-					inform(0, extra);
 					lastMapPosition = currentMapPosition;
 				}
 				Dimension currentDimension = frameBufferModel.getDimension();
 				if (currentDimension != null && !currentDimension.equals(lastDimension)) {
-					Bundle extra = new Bundle();
-					extra.putSerializable("position", currentDimension);
-					inform(0, extra);
+					extra.putSerializable("dimension", currentDimension);
 					lastDimension = currentDimension;
 				}
+				inform(0, extra);
 			}
 		});
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (DEBUG) { Log.d(TAG, "Map.onCreateView"); }
+		if (DEBUG) Log.d(TAG, "Map.onCreateView");
 		return mapView;
 	}
 
 	@Override public void onStart() {
 		super.onStart();
-		if (DEBUG) { Log.d(TAG, "Map.onStart"); }
+		if (DEBUG) Log.d(TAG, "Map.onStart");
 		// warp to 'unter den linden'
 		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
 		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition, false, true, AndroidGraphicFactory.INSTANCE) {
-			@Override public boolean onLongPress(LatLong tapLatLong, Point thisXY, Point tapXY) {
-				return Map.this.onLongPress(tapLatLong, thisXY, tapXY);
+			@Override public boolean onTap(LatLong latLong, Point thisXY, Point tapXY) {
+				Bundle extra = new Bundle();
+				extra.putSerializable("latLong", latLong);
+				extra.putSerializable("thisXY", thisXY);
+				extra.putSerializable("tapXY", tapXY);
+				inform(0, extra);
+				return true;
 			}
-			@Override public void onActionUp(LatLong latLong, Point xy, long eventTime, boolean moveThresholdReached) {
-				return Map.this.onActionUp(latLong, xy, eventTime, moveThresholdReached);
+			@Override public boolean onLongPress(LatLong latLong, Point thisXY, Point tapXY) {
+				Bundle extra = new Bundle();
+				extra.putSerializable("latLong", latLong);
+				extra.putSerializable("thisXY", thisXY);
+				extra.putSerializable("tapXY", tapXY);
+				inform(0, extra);
+				return true;
 			}
 		};
 		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
@@ -132,23 +140,14 @@ public class Map extends Base {
 
 	@Override public void onDestroy() {
 		super.onDestroy();
-		if (DEBUG) { Log.d(TAG, "Map.onDestroy"); }
+		if (DEBUG) Log.d(TAG, "Map.onDestroy");
 		tileCache.destroy();
 		mapView.getModel().mapViewPosition.destroy();
 		mapView.destroy();
 		AndroidGraphicFactory.clearResourceMemoryCache();
 	}
 
-	public void onActionUp(LatLong latLong, Point xy, long eventTime, boolean moveThresholdReached) {
-		if (DEBUG) { Log.d(TAG, "Map.onActionUp latLong=" + latLong + ", xy=" + xy + ", eventTime=" + eventTime + ", moveThresholdReached=" + moveThresholdReached); }
-	}
-
-	public boolean onLongPress(LatLong tapLatLong, Point thisXY, Point tapXY) {
-		if (DEBUG) { Log.d(TAG, "Map.onLongPress tapLatLong=" + tapLatLong + ", thisXY=" + thisXY + ", tapXY=" + tapXY); }
-		return true;
-	}
-
 	public void inform(int event, Bundle extra) {
-		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event + ", extra=" + extra); }
+		if (DEBUG) Log.d(TAG, "Map.inform event=" + event + ", extra=" + extra);
 	}
 }
