@@ -87,7 +87,8 @@ public class Map extends Base {
 			.setZoomLevelMax((byte) 18)
 			.setZoomLevelMin((byte) 2)
 			;
-		tileLayers[0] = new TileDownloadLayer(tileCaches[0], mapView.getModel().mapViewPosition, onlineTileSource, AndroidGraphicFactory.INSTANCE);
+		tileLayers[0] = new TileDownloadLayer(tileCaches[0], mapView.getModel().mapViewPosition,
+			onlineTileSource, AndroidGraphicFactory.INSTANCE);
 		mapView.getLayerManager().getLayers().add(tileLayers[0]);
 		tileLayers[0].setVisible(false);
 		// vector:
