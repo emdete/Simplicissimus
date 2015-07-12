@@ -52,9 +52,10 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
-	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
-	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
+	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/maps/world.map";
+	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/maps/germany.map";
+	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/maps/netherlands.map";
+	private static final File storage = new File("/storage/sdcard1/mapsforge/tilecache");
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -64,14 +65,19 @@ public class Map extends Base {
 	@SuppressWarnings("deprecation")
 	@TargetApi(18)
 	static long getAvailableCacheSlots(String directory, int fileSize) {
+		long ret = 0;
 		StatFs statfs = new StatFs(directory);
 		if (android.os.Build.VERSION.SDK_INT >= 18) {
-			return statfs.getAvailableBytes() / fileSize;
+			ret = statfs.getAvailableBytes() / fileSize;
 		}
-		// problem is overflow with devices with large storage, so order is important here
-		// additionally avoid division by zero in devices with a large block size
-		int blocksPerFile = Math.max(fileSize / statfs.getBlockSize(), 1);
-		return statfs.getAvailableBlocks() / blocksPerFile;
+		else {
+			// problem is overflow with devices with large storage, so order is important here
+			// additionally avoid division by zero in devices with a large block size
+			int blocksPerFile = Math.max(fileSize / statfs.getBlockSize(), 1);
+			ret = statfs.getAvailableBlocks() / blocksPerFile;
+		}
+		Log.d(TAG, "getAvailableCacheSlots ret=" + ret);
+		return ret;
 	}
 
 	static int estimateSizeOfFileSystemCache(String cacheDirectoryName, int firstLevelSize, int tileSize) {
@@ -85,29 +91,31 @@ public class Map extends Base {
 			// no point having a file system cache that does not even hold the memory cache
 			result = 0;
 		}
+		Log.d(TAG, "estimateSizeOfFileSystemCache result=" + result);
 		return result;
 	}
 
 	static TileCache createExternalStorageTileCache(Context c, String id, int firstLevelSize, int tileSize) {
-		Log.d(TAG, "TILECACHE INMEMORY SIZE=" + Integer.toString(firstLevelSize));
+		Log.d(TAG, "createExternalStorageTileCache firstLevelSize=" + firstLevelSize);
 		TileCache firstLevelTileCache = new InMemoryTileCache(firstLevelSize);
-		File cacheDir = c.getExternalCacheDir();
-		if (cacheDir != null) { // cacheDir will be null if full
-			String cacheDirectoryName = cacheDir.getAbsolutePath() + File.separator + id;
+		if (storage != null) { // storage will be null if full
+			String cacheDirectoryName = storage.getAbsolutePath() + File.separator + id;
 			File cacheDirectory = new File(cacheDirectoryName);
-			if (cacheDirectory.exists() || cacheDirectory.mkdir()) {
+			if (cacheDirectory.exists() || cacheDirectory.mkdirs()) {
 				int tileCacheFiles = estimateSizeOfFileSystemCache(cacheDirectoryName, firstLevelSize, tileSize);
 				if (cacheDirectory.canWrite() && tileCacheFiles > 0) {
 					try {
-						Log.d(TAG, "TILECACHE FILECACHE SIZE=" + Integer.toString(tileCacheFiles));
-						TileCache secondLevelTileCache = new FileSystemTileCache(tileCacheFiles, cacheDirectory,
-								org.mapsforge.map.android.graphics.AndroidGraphicFactory.INSTANCE, true, 25,
-								true);
+						Log.d(TAG, "createExternalStorageTileCache tileCacheFiles=" + tileCacheFiles);
+						TileCache secondLevelTileCache = new FileSystemTileCache(tileCacheFiles,
+							cacheDirectory, AndroidGraphicFactory.INSTANCE, true, 25, true);
 						return new TwoLevelTileCache(firstLevelTileCache, secondLevelTileCache);
 					} catch (IllegalArgumentException e) {
-						Log.w(TAG, "TILECACHE EXC=" + e.toString());
+						Log.w(TAG, "createExternalStorageTileCache e=" + e);
 					}
 				}
+			}
+			else {
+				Log.w(TAG, "createExternalStorageTileCache can't");
 			}
 		}
 		return firstLevelTileCache;
@@ -123,7 +131,11 @@ public class Map extends Base {
 		mapView = new MapView(getActivity());
 		preferencesFacade = new AndroidPreferences(getActivity().getSharedPreferences("map", Context.MODE_PRIVATE));
 		mapView.getModel().init(preferencesFacade);
-		//
+		if (mapView.getModel().mapViewPosition.getZoomLevel() == 0) {
+			// warp to 'unter den linden'
+			mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
+			mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
+		}
 		mapView.setClickable(true);
 		mapView.getMapScaleBar().setVisible(true);
 		mapView.setBuiltInZoomControls(true);
@@ -131,8 +143,7 @@ public class Map extends Base {
 		mapView.getMapZoomControls().setZoomLevelMax((byte) 18);
 		mapView.getMapZoomControls().setShowMapZoomControls(true);
 		mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-		tileCache = AndroidUtil.createTileCache(getActivity(), "mapcache", mapView.getModel().displayModel.getTileSize(),
-				1f, mapView.getModel().frameBufferModel.getOverdrawFactor());
+		tileCache = createExternalStorageTileCache(getActivity(), "osmarender", 50, mapView.getModel().displayModel.getTileSize());
 	}
 
 	@Override
@@ -149,9 +160,6 @@ public class Map extends Base {
 		if (DEBUG) {
 			Log.d(TAG, "Map.onStart");
 		}
-		// warp to 'unter den linden'
-		mapView.getModel().mapViewPosition.setCenter(new LatLong(52.517037, 13.38886));
-		mapView.getModel().mapViewPosition.setZoomLevel((byte) 12);
 		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
 		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition,
 				false, true, AndroidGraphicFactory.INSTANCE);

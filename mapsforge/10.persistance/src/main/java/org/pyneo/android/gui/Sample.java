@@ -80,10 +80,6 @@ public class Sample extends Activity {
 		return true;
 	}
 
-	@Override protected void createSharedPreferences() {
-        super.createSharedPreferences();
-        //this.preferencesFacade2 = new AndroidPreferences(this.getSharedPreferences(getPersistableId2(), MODE_PRIVATE));
-    }
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
