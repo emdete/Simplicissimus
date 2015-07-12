@@ -52,10 +52,10 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
-	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
-	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
-	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/Tiramisu_3_0_beta1.xml";
+	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/maps/world.map";
+	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/maps/germany.map";
+	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/maps/netherlands.map";
+	private static final String THEMEFILE = "/storage/sdcard1/mapsforge/themes/SimplyHike-HD-Night.xml";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
