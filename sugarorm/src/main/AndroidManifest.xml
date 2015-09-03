@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
+	<application
+		android:icon="@drawable/ic_launcher"
+		tools:replace="android:allowBackup,android:label"
+		android:allowBackup="false"
+		android:label="Sample"
+		android:name="com.orm.SugarApp"
+		>
+		<meta-data android:name="DATABASE" android:value="sample.db" />
+		<meta-data android:name="VERSION" android:value="2" />
+		<meta-data android:name="QUERY_LOG" android:value="true" />
+		<!-- meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.pyneo.android.gui" / -->
+		<activity android:label="Sample" android:name="Sample" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+	</application>
+</manifest>
