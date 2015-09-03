@@ -2,7 +2,7 @@ package org.pyneo.android.gui;
 
 import com.orm.SugarRecord;
 
-public class Item extends SugarRecord<Item> {
+public class Item extends SugarRecord {
 	String name;
 	String description;
 	Meta meta;

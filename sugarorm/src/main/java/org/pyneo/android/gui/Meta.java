@@ -8,16 +8,17 @@ import com.orm.dsl.Ignore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Meta extends SugarRecord<Meta> {
+public class Meta extends SugarRecord {
 	String name;
 	String description;
 	@Ignore
 	List<Item> items; // = new ArrayList<>();
 
 	void _inflate(Cursor c) {
-		//super.inflate(c);
-		if (getId() == null) items = new ArrayList<>(); else
-		items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
+		if (getId() == null)
+			items = new ArrayList<>();
+		else
+			items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
 	}
 
 	public Meta() {
@@ -52,22 +53,24 @@ public class Meta extends SugarRecord<Meta> {
 		this.items = items;
 	}
 
-	public void save() {
+	/*public void save() {
 		super.save();
 		for (Item item: items) {
 			item.meta = this;
 			item.save();
 		}
-	}
+	}*/
 
 	public void add(Item item) {
-		if (items == null) _inflate(null);
+		if (items == null)
+			_inflate(null);
 		item.meta = this;
 		items.add(item);
 	}
 
 	public int getItemCount() {
-		if (items == null) _inflate(null);
+		if (items == null)
+			_inflate(null);
 		return items.size();
 	}
 }

@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
 	<application
 		android:icon="@drawable/ic_launcher"
-		tools:replace="android:allowBackup,android:label"
 		android:allowBackup="false"
 		android:label="Sample"
-		android:name="com.orm.SugarApp"
+		android:name="Application"
 		>
 		<meta-data android:name="DATABASE" android:value="sample.db" />
 		<meta-data android:name="VERSION" android:value="2" />
