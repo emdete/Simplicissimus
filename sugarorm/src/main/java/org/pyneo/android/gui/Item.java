@@ -1,11 +1,9 @@
 package org.pyneo.android.gui;
 
-import com.orm.SugarRecord;
-import com.orm.dsl.NotNull;
-import com.orm.dsl.Unique;
+import co.uk.rushorm.core.RushObject;
 
-public class Item extends SugarRecord {
-	@Unique @NotNull
+public class Item extends RushObject {
+	// @RushUnique @NotNull
 	String name;
 	String description;
 	Meta meta;

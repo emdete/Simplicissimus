@@ -6,10 +6,11 @@
 		android:label="Sample"
 		android:name="Application"
 		>
-		<meta-data android:name="DATABASE" android:value="sample.db" />
-		<meta-data android:name="VERSION" android:value="3" />
-		<meta-data android:name="QUERY_LOG" android:value="true" />
-		<meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.pyneo.android.gui" />
+		<meta-data android:name="Rush_db_version" android:value="1" />
+		<meta-data android:name="Rush_db_name" android:value="sample.db" />
+		<meta-data android:name="Rush_debug" android:value="false" />
+		<meta-data android:name="Rush_requires_table_annotation" android:value="false" />
+		<meta-data android:name="Rush_log" android:value="true" />
 		<activity android:label="Sample" android:name="Sample" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

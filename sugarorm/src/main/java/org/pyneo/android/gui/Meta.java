@@ -1,21 +1,23 @@
 package org.pyneo.android.gui;
 
-import com.orm.SugarRecord;
-import com.orm.dsl.Ignore;
-import com.orm.dsl.NotNull;
-import com.orm.dsl.Unique;
 import java.util.ArrayList;
+import android.content.ClipData;
 import android.util.Log;
 import java.util.List;
 import java.util.Date;
+import co.uk.rushorm.core.RushObject;
+import co.uk.rushorm.core.annotations.RushIgnore;
+import co.uk.rushorm.core.annotations.RushList;
 
-public class Meta extends SugarRecord {
+public class Meta extends RushObject {
 	private static final String TAG = "org.pyneo.sample";
 	private static final boolean DEBUG = true;
-	@Unique @NotNull String name;
+	// @RushUnique @RushNotNull
+	String name;
 	String description;
 	Date timestamp = new Date();
-	@Ignore List<Item> items; // = new ArrayList<>();
+	@RushList(classType = Item.class)
+	List<Item> items = new ArrayList<>();
 
 	public Meta() {
 	}
@@ -42,26 +44,7 @@ public class Meta extends SugarRecord {
 	}
 
 	public List<Item> getItems() {
-		if (items == null) {
-			if (DEBUG) Log.d(TAG, "getItems: is null");
-			if (getId() == null) {
-				items = new ArrayList<>();
-			}
-			else {
-				if (DEBUG) Log.d(TAG, "getItems: id is not null");
-				items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
-			}
-		}
 		return items;
-	}
-
-	public long save() {
-		long id = super.save();
-		for (Item item: getItems()) {
-			item.meta = this;
-			item.save();
-		}
-		return id;
 	}
 
 	public void add(Item item) {
