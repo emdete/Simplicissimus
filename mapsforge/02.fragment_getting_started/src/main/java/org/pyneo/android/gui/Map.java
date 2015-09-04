@@ -25,19 +25,19 @@ import org.mapsforge.map.android.AndroidPreferences;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
-import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.download.TileDownloadLayer;
 import org.mapsforge.map.layer.download.tilesource.OnlineTileSource;
 import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.Layer;
+import org.mapsforge.map.layer.Layers;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.model.common.PreferencesFacade;
 import org.mapsforge.map.model.MapViewPosition;
 import org.mapsforge.map.reader.MapDataStore;
-import org.mapsforge.map.reader.MultiMapDataStore;
 import org.mapsforge.map.reader.MapFile;
+import org.mapsforge.map.reader.MultiMapDataStore;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
@@ -47,9 +47,9 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
-	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
-	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
+	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/maps/world.map";
+	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/maps/germany.map";
+	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/maps/netherlands.map";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;

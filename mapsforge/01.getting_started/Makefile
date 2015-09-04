@@ -14,8 +14,3 @@ dbg: run
 clean:
 	./gradlew -q clean
 
-dl:
-	# see http://download.mapsforge.org/maps/
-	if [ ! -f germany.map ] ; then wget http://download.mapsforge.org/maps/europe/germany.map; fi
-	adb push germany.map /storage/sdcard1/.
-	adb push theme.xml /storage/sdcard1/.

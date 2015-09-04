@@ -102,6 +102,6 @@ public class Map extends Base {
 	}
 
 	public void inform(int event, Bundle extra) {
-		if (DEBUG) { Log.d(TAG, "Map.inform event=" + event); }
+		if (DEBUG) Log.d(TAG, "Map.inform event=" + event);
 	}
 }

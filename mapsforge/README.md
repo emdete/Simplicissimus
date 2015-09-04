@@ -9,3 +9,22 @@ documentation
 
 see http://mapsforge.org/docs/0.5.1/
 
+maps from
+=========
+
+mapsforge:
+
+	http://download.mapsforge.org/maps/
+
+download a map via
+
+	wget http://download.mapsforge.org/maps/europe/germany.map
+
+and push it to the mobile:
+
+	adb push germany.map /storage/sdcard1/.
+	adb push theme.xml /storage/sdcard1/.
+
+alternativly use:
+
+	http://www.openandromaps.org/downloads/
