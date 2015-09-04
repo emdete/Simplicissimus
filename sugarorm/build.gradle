@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
 	compile 'com.github.satyan:sugar:1.4'
+	// compile files('libraries/sugar_orm-master.jar')
 }
 
 android {

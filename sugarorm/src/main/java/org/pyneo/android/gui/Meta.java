@@ -4,16 +4,16 @@ import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 import com.orm.dsl.NotNull;
 import com.orm.dsl.Unique;
-
 import java.util.ArrayList;
+import android.util.Log;
 import java.util.List;
 
 public class Meta extends SugarRecord {
-	@Unique @NotNull
-	String name;
+	private static final String TAG = "org.pyneo.sample";
+	private static final boolean DEBUG = true;
+	@Unique @NotNull String name;
 	String description;
-	@Ignore
-	List<Item> items; // = new ArrayList<>();
+	@Ignore List<Item> items; // = new ArrayList<>();
 
 	public Meta() {
 	}
@@ -40,24 +40,30 @@ public class Meta extends SugarRecord {
 	}
 
 	public List<Item> getItems() {
-		if (items == null)
-			if (getId() == null)
+		if (DEBUG) Log.d(TAG, "getItems:");
+		if (items == null) {
+			if (DEBUG) Log.d(TAG, "getItems: is null");
+			if (getId() == null) {
 				items = new ArrayList<>();
-			else
+			}
+			else {
+				if (DEBUG) Log.d(TAG, "getItems: id is not null");
 				items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
+			}
+		}
 		return items;
 	}
 
-	void _save() {
-		super.save();
+	public long save() {
+		long id = super.save();
 		for (Item item: items) {
 			item.meta = this;
 			item.save();
 		}
+		return id;
 	}
 
 	public void add(Item item) {
-		item.meta = this;
 		getItems().add(item);
 	}
 
