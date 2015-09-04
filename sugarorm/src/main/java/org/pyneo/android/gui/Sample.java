@@ -80,17 +80,20 @@ public class Sample extends Activity {
 
 	public void doTest(Context context) {
 		Button button = (Button)findViewById(R.id.button);
-		// Meta.listAll(Meta.class); // test if db created on first start
-		Meta m = new Meta("initial master", "this is a sample master");
-		for (int i=0;i<22;i++) {
-			m.add(new Item("item" + i, "this is the item no " + i));
+		Log.d(TAG, "in db count=" + Meta.listAll(Meta.class).size());
+		for (int j=0;j<2;j++) {
+			Meta m = new Meta("initial master", "this is a sample master");
+			Log.d(TAG, "before save id=" + m.getId());
+			for (int i=0;i<22;i++) {
+				m.add(new Item("item" + i, "this is the item no " + i));
+			}
+			long id = m.save();
+			Log.d(TAG, "after save id=" + m.getId());
+			// Meta.executeQuery("COMMIT");
+			m = Meta.findById(Meta.class, id);
+			Log.d(TAG, "after load count=" + m.getItemCount());
 		}
-		Log.d(TAG, "before save id=" + m.getId());
-		long id = m.save();
-		Log.d(TAG, "after save id=" + m.getId());
-		// Meta.executeQuery("COMMIT");
+		Meta.saveInTx();
 		button.setText("Started");
-		m = Meta.findById(Meta.class, id);
-		Log.d(TAG, "after load count=" + m.getItemCount());
 	}
 }

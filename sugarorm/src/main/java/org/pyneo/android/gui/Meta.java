@@ -7,12 +7,14 @@ import com.orm.dsl.Unique;
 import java.util.ArrayList;
 import android.util.Log;
 import java.util.List;
+import java.util.Date;
 
 public class Meta extends SugarRecord {
 	private static final String TAG = "org.pyneo.sample";
 	private static final boolean DEBUG = true;
 	@Unique @NotNull String name;
 	String description;
+	Date timestamp = new Date();
 	@Ignore List<Item> items; // = new ArrayList<>();
 
 	public Meta() {
@@ -40,7 +42,6 @@ public class Meta extends SugarRecord {
 	}
 
 	public List<Item> getItems() {
-		if (DEBUG) Log.d(TAG, "getItems:");
 		if (items == null) {
 			if (DEBUG) Log.d(TAG, "getItems: is null");
 			if (getId() == null) {
@@ -56,7 +57,7 @@ public class Meta extends SugarRecord {
 
 	public long save() {
 		long id = super.save();
-		for (Item item: items) {
+		for (Item item: getItems()) {
 			item.meta = this;
 			item.save();
 		}
