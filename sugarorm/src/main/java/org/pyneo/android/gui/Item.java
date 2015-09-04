@@ -1,8 +1,11 @@
 package org.pyneo.android.gui;
 
 import com.orm.SugarRecord;
+import com.orm.dsl.NotNull;
+import com.orm.dsl.Unique;
 
 public class Item extends SugarRecord {
+	@Unique @NotNull
 	String name;
 	String description;
 	Meta meta;

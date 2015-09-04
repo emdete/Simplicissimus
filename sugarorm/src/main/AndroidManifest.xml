@@ -9,7 +9,7 @@
 		<meta-data android:name="DATABASE" android:value="sample.db" />
 		<meta-data android:name="VERSION" android:value="2" />
 		<meta-data android:name="QUERY_LOG" android:value="true" />
-		<!-- meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.pyneo.android.gui" / -->
+		<meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.pyneo.android.gui" />
 		<activity android:label="Sample" android:name="Sample" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

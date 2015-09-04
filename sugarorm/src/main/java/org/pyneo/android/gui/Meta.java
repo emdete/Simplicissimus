@@ -1,25 +1,19 @@
 package org.pyneo.android.gui;
 
-import android.database.Cursor;
-
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
+import com.orm.dsl.NotNull;
+import com.orm.dsl.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Meta extends SugarRecord {
+	@Unique @NotNull
 	String name;
 	String description;
 	@Ignore
 	List<Item> items; // = new ArrayList<>();
-
-	void _inflate(Cursor c) {
-		if (getId() == null)
-			items = new ArrayList<>();
-		else
-			items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
-	}
 
 	public Meta() {
 	}
@@ -46,31 +40,28 @@ public class Meta extends SugarRecord {
 	}
 
 	public List<Item> getItems() {
+		if (items == null)
+			if (getId() == null)
+				items = new ArrayList<>();
+			else
+				items = Item.find(Item.class, "meta = ?", new String[]{Long.toString(getId())});
 		return items;
 	}
 
-	public void setItems(List<Item> items) {
-		this.items = items;
-	}
-
-	/*public void save() {
+	void _save() {
 		super.save();
 		for (Item item: items) {
 			item.meta = this;
 			item.save();
 		}
-	}*/
+	}
 
 	public void add(Item item) {
-		if (items == null)
-			_inflate(null);
 		item.meta = this;
-		items.add(item);
+		getItems().add(item);
 	}
 
 	public int getItemCount() {
-		if (items == null)
-			_inflate(null);
-		return items.size();
+		return getItems().size();
 	}
 }
