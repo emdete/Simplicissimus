@@ -1,13 +1,14 @@
 package org.pyneo.android.gui;
 
-import java.util.ArrayList;
 import android.content.ClipData;
 import android.util.Log;
-import java.util.List;
-import java.util.Date;
-import co.uk.rushorm.core.RushObject;
 import co.uk.rushorm.core.annotations.RushIgnore;
 import co.uk.rushorm.core.annotations.RushList;
+import co.uk.rushorm.core.RushObject;
+import co.uk.rushorm.core.RushSearch;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Meta extends RushObject {
 	private static final String TAG = "org.pyneo.sample";
@@ -16,8 +17,8 @@ public class Meta extends RushObject {
 	String name;
 	String description;
 	Date timestamp = new Date();
-	@RushList(classType = Item.class)
-	List<Item> items = new ArrayList<>();
+	//@RushList(classType = Item.class) List<Item> items = new ArrayList<>();
+	@RushIgnore List<Item> items;
 
 	public Meta() {
 	}
@@ -31,19 +32,24 @@ public class Meta extends RushObject {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void save() {
+		super.save();
+		if (items != null) {
+			for (Item item: items) {
+				item.metaId = getId();
+				item.save();
+			}
+		}
 	}
 
 	public List<Item> getItems() {
+		if (items == null) {
+			items = new RushSearch().whereEqual("metaId", getId()).find(Item.class);
+		}
 		return items;
 	}
 

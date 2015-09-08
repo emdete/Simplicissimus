@@ -16,8 +16,7 @@ public class Sample extends Activity {
 
 	Context context;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (DEBUG) Log.d(TAG, "onCreate");
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -30,70 +29,31 @@ public class Sample extends Activity {
 		context = getBaseContext();
 		Button button = (Button)findViewById(R.id.button);
 		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
+			@Override public void onClick(View view) {
 				if (DEBUG) Log.d(TAG, "onClick");
 				doTest(context);
 			}
 		});
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (DEBUG) Log.d(TAG, "onStart");
-	}
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		if (DEBUG) Log.d(TAG, "onRestart");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (DEBUG) Log.d(TAG, "onResume");
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (DEBUG) Log.d(TAG, "onPause");
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (DEBUG) Log.d(TAG, "onStop");
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle bundle) {
-		super.onSaveInstanceState(bundle);
-		if (DEBUG) Log.d(TAG, "onSaveInstanceState bundle=" + bundle);
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (DEBUG) Log.d(TAG, "onDestroy");
-	}
-
 	public void doTest(Context context) {
 		Button button = (Button)findViewById(R.id.button);
-		Log.d(TAG, "in db count=" + new RushSearch().find(Meta.class).size());
-		for (int j=0;j<2;j++) {
+		//Log.d(TAG, "in db count=" + new RushSearch().find(Meta.class).size());
+		for (int j=0;j<1;j++) {
 			Meta m = new Meta("initial master", "this is a sample master");
 			Log.d(TAG, "before save id=" + m.getId());
-			for (int i=0;i<22;i++) {
+			for (int i=0;i<9;i++) {
 				m.add(new Item("item" + i, "this is the item no " + i));
 			}
 			m.save();
 			String id = m.getId();
 			Log.d(TAG, "after save id=" + m.getId());
+			Item k = new Item("item" + -1, "this is the item no " + -1);
+			m.add(k);
+			k.save();
 			m = new RushSearch().whereId(id).findSingle(Meta.class);
-			Log.d(TAG, "after load count=" + m.getItemCount());
+			Log.d(TAG, "after load count=" + m.getItemCount() + ", timestamp=" + m.timestamp.toGMTString());
+			//for (Item item: m.items) { Log.d(TAG, "after load meta=" + item.meta); }
 		}
 		// Meta.saveInTx();
 		button.setText("Started");

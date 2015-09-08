@@ -6,7 +6,7 @@ public class Item extends RushObject {
 	// @RushUnique @NotNull
 	String name;
 	String description;
-	Meta meta;
+	String metaId;
 
 	public Item() {
 	}
@@ -20,15 +20,7 @@ public class Item extends RushObject {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }
