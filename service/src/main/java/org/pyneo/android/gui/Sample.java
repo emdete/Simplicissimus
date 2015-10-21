@@ -4,117 +4,102 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.content.Context;
+import android.os.Binder;
 import android.os.Bundle;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class Sample extends Activity {
 	static final String TAG = "org.pyneo.sample";
 	static boolean DEBUG = true;
 	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
+	Messenger mService = null;
+	boolean mIsBound;
+	Button mStatus;
+	final Messenger mMessenger = new Messenger(new Handler(){
+		@Override public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case R.id.msg_set_value:
+					mStatus.setText("Received from service: " + msg.arg1);
+					break;
+				default:
+					super.handleMessage(msg);
+			}
+		}
+	});
+	ServiceConnection mConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+			try {
+				Message msg = Message.obtain(null, R.id.msg_register_client);
+				msg.replyTo = mMessenger;
+				mService.send(msg);
+				msg = Message.obtain(null, R.id.msg_set_value, this.hashCode(), 0, new Bundle());
+				mService.send(msg);
+			}
+			catch (RemoteException ignore) {
+			}
+			Log.d(TAG, "Sample.ServiceConnection.onServiceConnected: remote service connected");
+			mStatus.setText("Attached.");
+		}
+		public void onServiceDisconnected(ComponentName className) {
+			mService = null;
+			Log.d(TAG, "Sample.ServiceConnection.onServiceDisconnected: remote service disconnected");
+			mStatus.setText("Disconnected.");
+		}
+	};
 
-	Context context;
-	ServiceConnection serviceConnection;
-	BackgroundService.BackgroundBinder binder;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (DEBUG) Log.d(TAG, "onCreate");
+		if (DEBUG) Log.d(TAG, "Sample.onCreate");
 		setContentView(R.layout.main);
-		context = getBaseContext();
-		Button button = (Button)findViewById(R.id.button);
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
+		mStatus = (Button)findViewById(R.id.button);
+		mStatus.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View view) {
 				Sample.this.onClick(view);
 			}
 		});
-		button.setText("click me!");
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (DEBUG) Log.d(TAG, "onStart");
-	}
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		if (DEBUG) Log.d(TAG, "onRestart");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (DEBUG) Log.d(TAG, "onResume");
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (DEBUG) Log.d(TAG, "onPause");
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (DEBUG) Log.d(TAG, "onStop");
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (DEBUG) Log.d(TAG, "onDestroy");
-		if (serviceConnection != null) {
-			unbindService(serviceConnection);
-		}
-	}
-
-	void onServiceConnected(ComponentName name, IBinder service) {
-		if (DEBUG) Log.d(TAG, "onServiceConnected: name=" + name + ", service=" + service);
-		binder = (BackgroundService.BackgroundBinder)service;
-	}
-
-	void onServiceDisconnected(ComponentName name) {
-		if (DEBUG) Log.d(TAG, "onServiceDisconnected: name=" + name);
-		binder = null;
+		mStatus.setText("Start!");
 	}
 
 	void onClick(View view) {
-		if (DEBUG) Log.d(TAG, "onClick");
-		Button button = (Button)findViewById(R.id.button);
-		if (false) {
-			startService(new Intent(this, BackgroundService.class));
+		if (DEBUG) Log.d(TAG, "Sample.onClick");
+		if(mIsBound) {
+			doUnbindService();
 		}
 		else {
-			if (serviceConnection == null) {
-				serviceConnection = new ServiceConnection() {
-						@Override
-						public void onServiceConnected(ComponentName name, IBinder service) {
-							Sample.this.onServiceConnected(name, service);
-						}
-						@Override
-						public void onServiceDisconnected(ComponentName name) {
-							Sample.this.onServiceDisconnected(name);
-						}
-					};
-				if (this.bindService(new Intent(this, BackgroundService.class), serviceConnection, BIND_AUTO_CREATE)) {
-					button.setText("service started");
+			doBindService();
+		}
+	}
+
+	void doBindService() {
+		bindService(new Intent(this, MessengerService.class), mConnection, Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+		mStatus.setText("Binding.");
+	}
+
+	void doUnbindService() {
+		if (mIsBound) {
+			mIsBound = false;
+			if (mService != null) {
+				try {
+					Message msg = Message.obtain(null, R.id.msg_unregister_client);
+					msg.replyTo = mMessenger;
+					mService.send(msg);
 				}
-				else {
-					button.setText("couldnt start service");
+				catch (RemoteException ignore) {
 				}
 			}
-			else {
-				unbindService(serviceConnection);
-				serviceConnection = null;
-				button.setText("service stopped");
-			}
+			unbindService(mConnection);
+			mStatus.setText("Unbinding.");
 		}
 	}
 }

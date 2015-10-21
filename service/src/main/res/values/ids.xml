@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="msg_set_value" type="id"/>
+	<item name="msg_register_client" type="id"/>
+	<item name="msg_unregister_client" type="id"/>
+	<item name="notification_id" type="id"/>
+</resources>
