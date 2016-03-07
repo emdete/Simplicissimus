@@ -44,6 +44,11 @@ public class Meta extends StoreObject {
 		return getItems(db).size();
 	}
 
+	public StoreObject add(SQLiteDatabase db, StoreObject item) throws Exception {
+		item.metaId = this.id;
+		return add(db, getItems(db), item);
+	}
+
 	public String toString() {
 		return "Meta " +
 			"name=" + name +

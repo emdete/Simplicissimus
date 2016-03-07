@@ -3,10 +3,10 @@ package org.pyneo.android.gui;
 import java.util.Date;
 
 public class Item extends StoreObject {
-	String name;
+	protected String name;
 	protected String description;
-	public long metaId = -1;
-	public Date timestamp;
+	protected long metaId = -1;
+	protected Date timestamp;
 
 	public Item() {
 		timestamp = new Date();
