@@ -1,0 +1,33 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:1.1.+'
+	}
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+	jcenter()
+	// maven { url "http://maven.rushorm.com" }
+}
+
+dependencies {
+	// compile 'co.uk.rushorm:rushandroid:1.1.9'
+}
+
+android {
+	compileSdkVersion 21
+	buildToolsVersion "21.1.2"
+	defaultConfig {
+		minSdkVersion 21
+		targetSdkVersion 21
+	}
+	android {
+		lintOptions {
+			abortOnError false
+		}
+	}
+}
