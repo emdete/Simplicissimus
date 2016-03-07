@@ -55,29 +55,23 @@ public class Sample extends Activity {
 		Button button = (Button)findViewById(R.id.button);
 		try {
 			SQLiteDatabase db = dbHelper.getWritableDatabase();
-			Item item = new Item();
-			item.insert(db);
-		/*
-		//Log.d(TAG, "in db count=" + new Search().find(Meta.class).size());
-		for (int j=0;j<1;j++) {
-			Meta m = new Meta("initial master", "this is a sample master");
-			//Log.d(TAG, "before save id=" + m.getId());
-			for (int i=0;i<9;i++) {
-				//m.add(new Item("item" + i, "this is the item no " + i));
+			for (int i=0;i<10;i++) {
+				if (DEBUG) Log.d(TAG, "new item=" +
+					new Item("Item " + i, "This is another famous item").insert(db));
 			}
-			//m.save();
-			String id = ""; //m.getId();
-			//Log.d(TAG, "after save id=" + m.getId());
-			Item k = new Item("item" + -1, "this is the item no " + -1);
-			//m.add(k);
-			//k.save();
-			m = null; // new Search().whereId(id).findSingle(Meta.class);
-			Log.d(TAG, "after load count=" + m.getItemCount() + ", timestamp=" + m.timestamp.toGMTString() + ", meta=" + m);
-			Log.d(TAG, "meta=" + k.getMeta());
-			//for (Item item: m.items) { Log.d(TAG, "after load meta=" + item.meta); }
-		}
-		// Meta.saveInTx();
-		*/
+			for (StoreObject item: StoreObject.select(db, Item.class)) {
+				((Item)item).description = "Blullulul";
+				item.update(db);
+				//item.delete(db);
+				if (DEBUG) Log.d(TAG, "updated item=" + item);
+			}
+			for (StoreObject item: StoreObject.query(db, Item.class)
+				.where("name").identity("Item 0")
+				.and("description").like("B%")
+				.order_by("date")
+				.fetchAll()) {
+				if (DEBUG) Log.d(TAG, "queried item=" + item);
+			}
 			button.setText("Started");
 		}
 		catch (Exception e) {
