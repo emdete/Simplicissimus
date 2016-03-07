@@ -60,7 +60,6 @@ public class Sample extends Activity {
 			for (StoreObject item: StoreObject.select(db, Item.class)) {
 				((Item)item).description = "Blullulul";
 				item.update(db);
-				//item.delete(db);
 				if (DEBUG) Log.d(TAG, "updated item=" + item);
 			}
 			for (StoreObject item: StoreObject.query(db, Item.class)
@@ -69,6 +68,10 @@ public class Sample extends Activity {
 				.order_by("timestamp")
 				.fetchAll()) {
 				if (DEBUG) Log.d(TAG, "queried item=" + item);
+			}
+			for (StoreObject meta: StoreObject.select(db, Meta.class)) {
+				if (DEBUG) Log.d(TAG, "del meta=" + meta);
+				meta.delete(db);
 			}
 			button.setText("Started");
 		}

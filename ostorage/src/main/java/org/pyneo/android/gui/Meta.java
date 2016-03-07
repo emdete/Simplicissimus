@@ -50,6 +50,13 @@ public class Meta extends StoreObject {
 		return (Item)add(db, getItems(db), item);
 	}
 
+	public void delete(SQLiteDatabase db) throws Exception {
+		for (Item item: getItems(db)) {
+			item.delete(db);
+		}
+		super.delete(db);
+	}
+
 	public String toString() {
 		return "Meta " +
 			"name=" + name +
