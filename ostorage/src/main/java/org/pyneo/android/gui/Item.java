@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class Item extends StoreObject {
 	String name;
-	String description;
-	String metaId;
-	Date timestamp;
+	protected String description;
+	public long metaId = -1;
+	public Date timestamp;
 
 	public Item() {
 		timestamp = new Date();
@@ -26,7 +26,11 @@ public class Item extends StoreObject {
 		return name;
 	}
 
-	public Meta getMeta() {
-		return null; //new Search().whereId(metaId).findSingle(Meta.class);
+	public String toString() {
+		return "Item " +
+			"name=" + name +
+			", description=" + description +
+			", metaId=" + metaId +
+			", timestamp=" + timestamp;
 	}
 }
