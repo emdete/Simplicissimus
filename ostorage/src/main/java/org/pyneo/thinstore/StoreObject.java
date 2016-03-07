@@ -1,4 +1,4 @@
-package org.pyneo.android.gui;
+package org.pyneo.thinstore;
 // see http://developer.android.com/training/basics/data-storage/databases.html
 
 import android.content.ContentValues;
@@ -27,16 +27,18 @@ import java.util.WeakHashMap;
  * (beside create/drop table). reflection is used to allow compile time checks
  * of flows (beside the column name in the where and order clauses) and no
  * additional columns are added to the pojos (beside the id column that is
- * filled by android on insert). usage: create a pojo, make the members
- * protected or public, derive from StoreObject and you're done. on any db
- * related operation you have to deliver a database object which stays in your
- * control. you have to provide the SQLiteOpenHelper and use the create()
- * methods to create the tables in its onCreate() method. you can use the query
- * class which allows you to write nice stuff like query(db,
- * Item.class).where("name").identity("Item
- * 0").and("description").like("B%").order_by("date").fetchAll()
+ * filled by android on insert). usage: create a pojo, add some members, derive
+ * from StoreObject and you're done. static and volatile members wont be
+ * persisted. on any db related operation you have to deliver a database object
+ * which stays in your control. you have to provide the SQLiteOpenHelper and
+ * use the create() methods to create the tables in its onCreate() method. you
+ * can use the query class which allows you to write nice stuff like query(db,
+ * Pojo.class).where("name").identity("Pojo
+ * 0").and("description").like("P%").order_by("timestamp").fetchAll()
  */
 public class StoreObject {
+	private static final SimpleDateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+	private static final String TAG = "org.pyneo";
 	/**
 	 * supported java datatypes. most native types plus string and date.
 	 */
@@ -52,7 +54,6 @@ public class StoreObject {
 		}));
 	private static final Map<Class, Field[]> FIELDS_CACHE = new WeakHashMap();
 	private static final String ID_WHERE = "id = ?";
-	private static final SimpleDateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 	static {
 		ISO_DATE.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
@@ -60,7 +61,7 @@ public class StoreObject {
 	/**
 	 * primary key for all StoreObject
 	 */
-	long id = -1;
+	protected long id = -1;
 
 	/**
 	 * method to determine a list of fields that will be mapped to a sql table
@@ -77,18 +78,20 @@ public class StoreObject {
 			else {
 				_fields = new ArrayList<Field>();
 			}
-			for (Field f: clazz.getDeclaredFields()) {
-				//if ((f.getModifiers() & Modifier.PROTECTED) == 0) continue;
-				if ((f.getModifiers() & (0
+			for (Field field: clazz.getDeclaredFields()) {
+				//if ((field.getModifiers() & Modifier.PROTECTED) == 0) continue;
+				if ((field.getModifiers() & (0
 					|Modifier.STATIC
 					|Modifier.VOLATILE
 					)) != 0)
 					continue;
-				if (f.getName().startsWith("this$")) // outer class reference :)
+				if ((field.getModifiers() & Modifier.PUBLIC) == 0)
+					field.setAccessible(true);
+				if (field.getName().startsWith("this$")) // outer class reference :)
 					continue;
-				if (!SUPPORTED_TYPES.contains(f.getType()))
+				if (!SUPPORTED_TYPES.contains(field.getType()))
 					continue;
-				_fields.add(f);
+				_fields.add(field);
 			}
 			fields = _fields.toArray(new Field[0]);
 			FIELDS_CACHE.put(clazz, fields);
@@ -106,7 +109,7 @@ public class StoreObject {
 		for (Field field: fields) {
 			ret[i++] = field.getName();
 		}
-		Log.d(Sample.TAG, "projection=" + Arrays.toString(ret));
+		Log.d(TAG, "projection=" + Arrays.toString(ret));
 		return ret;
 	}
 
@@ -188,7 +191,7 @@ public class StoreObject {
 	/**
 	 *
 	 */
-	StoreObject add(SQLiteDatabase db, List list, StoreObject item) throws Exception {
+	protected StoreObject add(SQLiteDatabase db, List list, StoreObject item) throws Exception {
 		list.add(item);
 		return item.insert(db);
 	}
@@ -196,17 +199,17 @@ public class StoreObject {
 	/**
 	 * create the table in the database.
 	 */
-	static String create(SQLiteDatabase db, Class clazz) {
+	public static String create(SQLiteDatabase db, Class clazz) {
 		String ret = "CREATE TABLE ";
 		ret += clazz.getSimpleName();
 		ret += " (";
-		for (Field f: storedFields(clazz)) {
-			if ("id".equals(f.getName())) {
+		for (Field field: storedFields(clazz)) {
+			if ("id".equals(field.getName())) {
 				ret += "id INTEGER PRIMARY KEY AUTOINCREMENT";
 			}
 			else {
 				ret += ", ";
-				ret += f.getName();
+				ret += field.getName();
 			}
 		}
 		ret += ")";
@@ -219,12 +222,12 @@ public class StoreObject {
 	/**
 	 * insert this record into the database.
 	 */
-	StoreObject insert(SQLiteDatabase db) throws Exception {
+	public StoreObject insert(SQLiteDatabase db) throws Exception {
 		if (id >= 0) {
 			throw new Exception("id=" + id);
 		}
 		id = db.insert(this.getClass().getSimpleName(), "null", toContentValues(new ContentValues()));
-		Log.d(Sample.TAG, "new item id=" + id);
+		Log.d(TAG, "new item id=" + id);
 		return this;
 	}
 
@@ -232,7 +235,7 @@ public class StoreObject {
 	 * selects records from the database. mainly intern usage, use query object
 	 * to control where and order filters.
 	 */
-	static List<StoreObject> select(SQLiteDatabase db, Class clazz, String where, String[] values, String order) throws Exception {
+	public static List<StoreObject> select(SQLiteDatabase db, Class clazz, String where, String[] values, String order) throws Exception {
         Cursor cursor = db.query(clazz.getSimpleName(),
 			getProjection(clazz),
 			where, // where
@@ -250,7 +253,7 @@ public class StoreObject {
 	/**
 	 * select records from the database. all records for one class will be derived.
 	 */
-	static List<StoreObject> select(SQLiteDatabase db, Class clazz) throws Exception {
+	public static List<StoreObject> select(SQLiteDatabase db, Class clazz) throws Exception {
         return select(db, clazz, null, null, "id");
 	}
 
@@ -258,14 +261,14 @@ public class StoreObject {
 	 * start a query. creates a query objects where filter can be applied and
 	 * finally a fetch can be done.
 	 */
-	static Query query(SQLiteDatabase db, Class clazz) throws Exception {
+	public static Query query(SQLiteDatabase db, Class clazz) throws Exception {
 		return new Query(db, clazz);
 	}
 
 	/**
 	 * query object that holds the data to finally issue the query.
 	 */
-	static class Query {
+	public static class Query {
 		SQLiteDatabase db;
 		Class clazz;
 		String where;
@@ -277,33 +280,42 @@ public class StoreObject {
 			this.clazz = clazz;
 		}
 
-		Query where(String f) {
-			where = f;
+		public Query where(String column) {
+			// TODO check column
+			where = column;
 			return this;
 		}
 
-		Query identity(Object o) {
+		public Query identity(Object o) {
 			where += " = ?";
 			values.add(o.toString());
 			return this;
 		}
 
-		Query like(Object o) {
+		public Query like(Object o) {
 			where += " LIKE ?";
 			values.add(o.toString());
 			return this;
 		}
 
-		Query and(String f) {
-			where += " AND " + f;
+		public Query and(String column) {
+			// TODO check column
+			where += " AND " + column;
 			return this;
 		}
 
-		Query order_by(String f) {
+		public Query order_by(String column) {
+			// TODO check column
+			if (order == null) {
+				order = column;
+			}
+			else {
+				order += ", " + column;
+			}
 			return this;
 		}
 
-		StoreObject fetchOne() throws Exception {
+		public StoreObject fetchOne() throws Exception {
 			Cursor cursor = db.query(clazz.getSimpleName(),
 				getProjection(clazz),
 				where, // where
@@ -322,15 +334,15 @@ public class StoreObject {
 			return list;
 		}
 
-		List<StoreObject> fetchAll() throws Exception {
-			return select(db, clazz, where, values.toArray(new String[0]), "id");
+		public List<StoreObject> fetchAll() throws Exception {
+			return select(db, clazz, where, values.toArray(new String[0]), order);
 		}
 	}
 
 	/**
 	 * update this record in the database.
 	 */
-	StoreObject update(SQLiteDatabase db) throws Exception {
+	public StoreObject update(SQLiteDatabase db) throws Exception {
 		if (id < 0) {
 			throw new Exception("id=" + id);
 		}
@@ -343,7 +355,7 @@ public class StoreObject {
 	/**
 	 * delete this record from the database.
 	 */
-	void delete(SQLiteDatabase db) throws Exception {
+	public void delete(SQLiteDatabase db) throws Exception {
 		if (id < 0) {
 			throw new Exception("id=" + id);
 		}
@@ -355,7 +367,7 @@ public class StoreObject {
 	/**
 	 * drop the table from the database.
 	 */
-	static String drop(SQLiteDatabase db, Class clazz) {
+	public static String drop(SQLiteDatabase db, Class clazz) {
 		String ret = "DROP TABLE ";
 		ret += clazz.getSimpleName();
         if (db != null) {

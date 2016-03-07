@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
-	<application
-		android:icon="@drawable/ic_launcher"
-		android:allowBackup="false"
-		android:label="Sample"
-		android:name="Application"
-		>
-		<meta-data android:name="Rush_db_version" android:value="1" />
-		<meta-data android:name="Rush_db_name" android:value="sample.db" />
-		<meta-data android:name="Rush_debug" android:value="false" />
-		<meta-data android:name="Rush_requires_table_annotation" android:value="false" />
-		<meta-data android:name="Rush_log" android:value="true" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
+	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
 		<activity android:label="Sample" android:name="Sample" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

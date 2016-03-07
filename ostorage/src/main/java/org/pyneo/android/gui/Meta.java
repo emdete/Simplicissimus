@@ -5,13 +5,14 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.pyneo.thinstore.StoreObject;
 
 public class Meta extends StoreObject {
 	private static final String TAG = "org.pyneo.sample";
 	private static final boolean DEBUG = true;
-	String name;
-	String description;
-	Date timestamp = new Date();
+	protected String name;
+	protected String description;
+	protected Date timestamp = new Date();
 	List<Item> items;
 
 	public Meta() {
@@ -44,9 +45,9 @@ public class Meta extends StoreObject {
 		return getItems(db).size();
 	}
 
-	public StoreObject add(SQLiteDatabase db, StoreObject item) throws Exception {
+	public Item add(SQLiteDatabase db, Item item) throws Exception {
 		item.metaId = this.id;
-		return add(db, getItems(db), item);
+		return (Item)add(db, getItems(db), item);
 	}
 
 	public String toString() {
