@@ -22,9 +22,11 @@ download a map via
 
 and push it to the mobile:
 
-	adb push germany.map /storage/sdcard1/.
-	adb push theme.xml /storage/sdcard1/.
+	adb push germany.map /storage/sdcard1/Android/data/org.pyneo.tabulae/files/maps/mapsforge
 
 alternativly use:
 
 	http://www.openandromaps.org/downloads/
+
+	http://ftp5.gwdg.de/pub/misc/openstreetmap/openandromaps/maps/...
+
