@@ -1,3 +1,0 @@
-Template for sample app
-=======================
-
