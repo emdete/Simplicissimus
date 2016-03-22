@@ -63,7 +63,7 @@ public class Sample extends Activity {
 				if (DEBUG) Log.d(TAG, "updated item=" + item);
 			}
 			for (StoreObject item: StoreObject.query(db, Item.class)
-				.where("name").identity("Item 0")
+				.where("name").equal("Item 0")
 				.and("description").like("B%")
 				.order_by("timestamp")
 				.fetchAll()) {

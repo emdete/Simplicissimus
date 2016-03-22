@@ -34,7 +34,7 @@ public class Meta extends StoreObject {
 	public List<Item> getItems(SQLiteDatabase db) throws Exception {
 		if (items == null) {
 			items = new ArrayList();
-			for (StoreObject item: query(db, Item.class).where("metaId").identity(id).fetchAll()) {
+			for (StoreObject item: query(db, Item.class).where("metaId").equal(id).fetchAll()) {
 				items.add((Item)item);
 			}
 		}

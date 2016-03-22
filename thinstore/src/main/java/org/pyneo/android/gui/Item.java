@@ -1,6 +1,7 @@
 package org.pyneo.android.gui;
 
 import java.util.Date;
+import org.pyneo.thinstore.Col;
 import org.pyneo.thinstore.StoreObject;
 
 public class Item extends StoreObject {

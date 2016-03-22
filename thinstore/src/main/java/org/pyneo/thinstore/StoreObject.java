@@ -33,7 +33,7 @@ import java.util.WeakHashMap;
  * which stays in your control. you have to provide the SQLiteOpenHelper and
  * use the create() methods to create the tables in its onCreate() method. you
  * can use the query class which allows you to write nice stuff like query(db,
- * Pojo.class).where("name").identity("Pojo
+ * Pojo.class).where("name").equal("Pojo
  * 0").and("description").like("P%").order_by("timestamp").fetchAll()
  */
 public class StoreObject {
@@ -286,7 +286,7 @@ public class StoreObject {
 			return this;
 		}
 
-		public Query identity(Object o) {
+		public Query equal(Object o) {
 			where += " = ?";
 			values.add(o.toString());
 			return this;
