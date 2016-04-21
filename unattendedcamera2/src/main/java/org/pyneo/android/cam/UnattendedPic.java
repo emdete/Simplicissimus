@@ -28,9 +28,8 @@ import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class UnattendedPic {
-	private static final String TAG = UnattendedPic.class.getName();
-	private static boolean DEBUG = true;
-	// static { DEBUG = Log.isLoggable(TAG, Log.DEBUG); }
+	private static final String TAG = "pyneo.org";
+	private static final boolean DEBUG = true;
 	private static class ImageSaver implements Runnable {
 		private final Image mImage;
 		private final File mFile;
