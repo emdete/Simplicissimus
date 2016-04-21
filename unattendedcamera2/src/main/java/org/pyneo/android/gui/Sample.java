@@ -28,7 +28,7 @@ public class Sample extends Activity {
 	static final private String LINE_END = "\r\n";
 	static final private String TWO_HYPHENS = "--";
 	static final private String BOUNDARY = "*****";
-	static final private String SERVER_URL = "https://pyneo.org/sample/upload/";
+	static final private String SERVER_URL = "https://pyneo.org/sample/upload";
 	static final private int maxBufferSize = 1 * 1024 * 1024;
 	Context context;
 
@@ -166,7 +166,7 @@ public class Sample extends Activity {
 		int serverResponseCode = conn.getResponseCode();
 		if (serverResponseCode != HttpURLConnection.HTTP_OK) {
 			String serverResponseMessage = conn.getResponseMessage();
-			Log.e(TAG, "HTTP Response is : " + serverResponseMessage + ": " + serverResponseCode);
+			Log.e(TAG, "HTTP Response is: " + serverResponseMessage + ": " + serverResponseCode);
 			throw new Exception(serverResponseMessage);
 		}
 	}
