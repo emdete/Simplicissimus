@@ -28,19 +28,18 @@ import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class UnattendedPic {
-	private static final String TAG = "pyneo.org";
+	private static final String TAG = "org.pyneo";
 	private static final boolean DEBUG = true;
 	private static class ImageSaver implements Runnable {
 		private final Image mImage;
 		private final File mFile;
 		public ImageSaver(Image image, File file) {
-			Log.d(TAG, "ImageSaver");
+			if (DEBUG) Log.d(TAG, "ImageSaver");
 			mImage = image;
 			mFile = file;
 		}
-		@Override
-		public void run() {
-			Log.d(TAG, "ImageSaver.run");
+		@Override public void run() {
+			if (DEBUG) Log.d(TAG, "ImageSaver.run");
 			try {
 				ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
 				byte[] bytes = new byte[buffer.remaining()];
@@ -55,7 +54,7 @@ public class UnattendedPic {
 				}
 			}
 			catch (Exception e) {
-				Log.e(TAG, "caught an exception", e);
+				Log.e(TAG, "caught an exception=" + e, e);
 			}
 			finally {
 				mImage.close();
@@ -66,8 +65,7 @@ public class UnattendedPic {
 	private Handler mBackgroundHandler;
 	private ImageReader mImageReader;
 	private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
-		@Override
-		public void onImageAvailable(ImageReader reader) {
+		@Override public void onImageAvailable(ImageReader reader) {
 			Log.d(TAG, "onImageAvailable");
 			mBackgroundHandler.post(new ImageSaver(reader.acquireLatestImage(), mFile));
 		}
@@ -78,8 +76,7 @@ public class UnattendedPic {
 	private CaptureRequest.Builder captureBuilder;
 	private CameraCaptureSession.CaptureCallback captureCallback;
 	private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
-		@Override
-		public void onOpened(CameraDevice cameraDevice) {
+		@Override public void onOpened(CameraDevice cameraDevice) {
 			Log.d(TAG, "onOpened");
 			mCameraOpenCloseLock.release();
 			mCameraDevice = cameraDevice;
@@ -91,8 +88,7 @@ public class UnattendedPic {
 				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
 				captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
 				mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
-					@Override
-					public void onConfigured(CameraCaptureSession cameraCaptureSession) {
+					@Override public void onConfigured(CameraCaptureSession cameraCaptureSession) {
 						Log.d(TAG, "onConfigured");
 						if (null == mCameraDevice) {
 							return;
@@ -101,8 +97,7 @@ public class UnattendedPic {
 						captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 						captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 						captureCallback = new CameraCaptureSession.CaptureCallback() {
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+							@Override public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
 								Log.d(TAG, "onCaptureCompleted");
 								captured(mFile);
 							}
@@ -114,8 +109,7 @@ public class UnattendedPic {
 							Log.e(TAG, "caught an exception", e);
 						}
 					}
-					@Override
-					public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
+					@Override public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
 						Log.i(TAG, "onConfigureFailed");
 					}
 				}, null);
@@ -123,15 +117,13 @@ public class UnattendedPic {
 				Log.e(TAG, "caught an exception", e);
 			}
 		}
-		@Override
-		public void onDisconnected(CameraDevice cameraDevice) {
+		@Override public void onDisconnected(CameraDevice cameraDevice) {
 			Log.d(TAG, "onDisconnected");
 			mCameraOpenCloseLock.release();
 			cameraDevice.close();
 			mCameraDevice = null;
 		}
-		@Override
-		public void onError(CameraDevice cameraDevice, int error) {
+		@Override public void onError(CameraDevice cameraDevice, int error) {
 			Log.d(TAG, "onError error=" + error);
 			mCameraOpenCloseLock.release();
 			cameraDevice.close();
@@ -141,11 +133,11 @@ public class UnattendedPic {
 	private File mFile;
 
 	public void capture(Activity activity) {
-		Log.d(TAG, "capture!");
+		if (DEBUG) Log.d(TAG, "capture!");
 		boolean isLS = activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-		Log.d(TAG, "capture isLS=" + isLS);
+		if (DEBUG) Log.d(TAG, "capture isLS=" + isLS);
 		boolean isR = activity.getWindowManager().getDefaultDisplay().getRotation() != Surface.ROTATION_0;
-		Log.d(TAG, "capture isR=" + isR);
+		if (DEBUG) Log.d(TAG, "capture isR=" + isR);
 		if (mImageReader == null) {
 			mBackgroundThread = new HandlerThread("CameraBackground");
 			mBackgroundThread.start();
@@ -163,13 +155,16 @@ public class UnattendedPic {
 						if (DEBUG) Log.d(TAG, "doTest characteristics=" + characteristics);
 						StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 						if (DEBUG) Log.d(TAG, "doTest map=" + map);
-						int width = 800;
-						int height = 600;
+						int width = 960;//800;
+						int height = 720;//600;
 						for (Size o: map.getOutputSizes(ImageFormat.JPEG)) {
 							if (DEBUG) Log.d(TAG, "doTest o=" + o);
-							o.getWidth();
-							o.getHeight();
+							if (700 < o.getWidth() && o.getWidth() < 1000) {
+								width = o.getWidth();
+								height = o.getHeight();
+							}
 						}
+						if (DEBUG) Log.d(TAG, "doTest width=" + width + ", height=" + height);
 						mImageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 2);
 						mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
 						manager.openCamera(cameraId, mStateCallback, mBackgroundHandler);

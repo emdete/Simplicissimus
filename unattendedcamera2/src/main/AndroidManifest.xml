@@ -4,10 +4,20 @@
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
-		<activity android:label="Sample" android:name="Sample" >
+		<activity
+			android:label="Sample"
+			android:name="Sample"
+			android:alwaysRetainTaskState="true"
+			android:configChanges="keyboardHidden|orientation"
+			android:launchMode="singleTask"
+			>
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<action android:name="TAKE"/>
 			</intent-filter>
 		</activity>
 	</application>

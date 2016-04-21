@@ -79,6 +79,17 @@ public class Sample extends Activity {
 				doTest(context);
 			}
 		});
+		final Intent queryIntent = getIntent();
+		final String queryAction = queryIntent.getAction();
+		if (Intent.ACTION_MAIN.equals(queryAction)) {
+			;
+		} else if ("TAKE".equals(queryAction)) {
+			//String package_ = getCallingPackage();
+			//String activity = getCallingActivity().flattenToString();
+			//Bundle extra = queryIntent.getExtras();
+			//Uri uri = queryIntent.getData();
+			doTest(context);
+		}
 	}
 
 	@Override protected void onStart() {
@@ -133,6 +144,7 @@ public class Sample extends Activity {
 	}
 
 	public void uploadFile(File sourceFile) throws Exception {
+		if (DEBUG) Log.d(TAG, "uploadFile sourceFile=" + sourceFile);
 		if (!sourceFile.isFile()) {
 			throw new Exception("file does not exist");
 		}
