@@ -1,4 +1,4 @@
-package org.pyneo.android.cam;
+package org.pyneo.cam;
 
 import android.content.res.Configuration;
 import android.util.Size;
@@ -47,7 +47,7 @@ public class UnattendedPic {
 				FileOutputStream output = new FileOutputStream(mFile);
 				try {
 					output.write(bytes);
-					Log.d(TAG, "ImageSaver.run mFile=" + mFile);
+					if (DEBUG) Log.d(TAG, "ImageSaver.run mFile=" + mFile);
 				}
 				finally {
 					output.close();
@@ -66,7 +66,7 @@ public class UnattendedPic {
 	private ImageReader mImageReader;
 	private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
 		@Override public void onImageAvailable(ImageReader reader) {
-			Log.d(TAG, "onImageAvailable");
+			if (DEBUG) Log.d(TAG, "onImageAvailable");
 			mBackgroundHandler.post(new ImageSaver(reader.acquireLatestImage(), mFile));
 		}
 	};
@@ -77,7 +77,7 @@ public class UnattendedPic {
 	private CameraCaptureSession.CaptureCallback captureCallback;
 	private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 		@Override public void onOpened(CameraDevice cameraDevice) {
-			Log.d(TAG, "onOpened");
+			if (DEBUG) Log.d(TAG, "onOpened");
 			mCameraOpenCloseLock.release();
 			mCameraDevice = cameraDevice;
 			try {
@@ -89,7 +89,7 @@ public class UnattendedPic {
 				captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
 				mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
 					@Override public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-						Log.d(TAG, "onConfigured");
+						if (DEBUG) Log.d(TAG, "onConfigured");
 						if (null == mCameraDevice) {
 							return;
 						}
@@ -98,11 +98,11 @@ public class UnattendedPic {
 						captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 						captureCallback = new CameraCaptureSession.CaptureCallback() {
 							@Override public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-								Log.d(TAG, "onCaptureCompleted");
+								if (DEBUG) Log.d(TAG, "onCaptureCompleted");
 								captured(mFile);
 							}
 						};
-						Log.d(TAG, "onConfigured: capture!");
+						if (DEBUG) Log.d(TAG, "onConfigured: capture!");
 						try {
 							mCaptureSession.capture(captureBuilder.build(), captureCallback, null);
 						} catch (Exception e) {
@@ -118,13 +118,13 @@ public class UnattendedPic {
 			}
 		}
 		@Override public void onDisconnected(CameraDevice cameraDevice) {
-			Log.d(TAG, "onDisconnected");
+			if (DEBUG) Log.d(TAG, "onDisconnected");
 			mCameraOpenCloseLock.release();
 			cameraDevice.close();
 			mCameraDevice = null;
 		}
 		@Override public void onError(CameraDevice cameraDevice, int error) {
-			Log.d(TAG, "onError error=" + error);
+			if (DEBUG) Log.d(TAG, "onError error=" + error);
 			mCameraOpenCloseLock.release();
 			cameraDevice.close();
 			mCameraDevice = null;

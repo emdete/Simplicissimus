@@ -9,18 +9,15 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import org.pyneo.android.cam.UnattendedPic;
+import org.pyneo.cam.UnattendedPic;
 import android.content.Intent;
-import android.net.Uri;
 
 public class Sample extends Activity {
 	static final String TAG = "org.pyneo.sample";
