@@ -24,7 +24,7 @@ import org.mapsforge.map.layer.download.TileDownloadLayer;
 import org.mapsforge.map.layer.download.tilesource.OnlineTileSource;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.layer.TileLayer;
-import org.mapsforge.map.reader.MultiMapDataStore;
+import org.mapsforge.map.datastore.MultiMapDataStore;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
@@ -33,9 +33,7 @@ public class Map extends Base {
 	static final private String TAG = Sample.TAG;
 	static final private boolean DEBUG = Sample.DEBUG;
 	// get one from http://download.mapsforge.org/maps/ and adapt path to your needs:
-	private static final String MAPFILE0 = "/storage/sdcard1/mapsforge/world.map";
-	private static final String MAPFILE1 = "/storage/sdcard1/mapsforge/germany.map";
-	private static final String MAPFILE2 = "/storage/sdcard1/mapsforge/netherlands.map";
+	private static final String MAPDIR = "/sdcard/Download/mapsforge/";
 
 	MapView mapView;
 	TileRendererLayer tileLayer;
@@ -72,10 +70,17 @@ public class Map extends Base {
 		mapView.getModel().mapViewPosition.setZoomLevel((byte)12);
 		MultiMapDataStore multiMapDataStore = new MultiMapDataStore(MultiMapDataStore.DataPolicy.DEDUPLICATE);
 		tileLayer = new TileRendererLayer(tileCache, multiMapDataStore, mapView.getModel().mapViewPosition,
-			false, true, AndroidGraphicFactory.INSTANCE);
-		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE1)), true, true);
-		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE2)), false, false);
-		multiMapDataStore.addMapDataStore(new MapFile(new File(MAPFILE0)), false, false);
+			false, true, true, AndroidGraphicFactory.INSTANCE);
+		File mapdir = new File(MAPDIR);
+		File[] mapfiles = mapdir.listFiles();
+		if (DEBUG) { Log.d(TAG, "Map.onStart MAPDIR=" + MAPDIR); }
+		if (DEBUG) { Log.d(TAG, "Map.onStart mapfiles=" + mapfiles); }
+		if (mapfiles != null) for (File mapfile: mapfiles) {
+			if (DEBUG) { Log.d(TAG, "Map.onStart mapfile=" + mapfile); }
+			if (mapfile.isFile()) {
+				multiMapDataStore.addMapDataStore(new MapFile(mapfile), true, true);
+			}
+		}
 		tileLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 		mapView.getLayerManager().getLayers().add(tileLayer);
 		myLocationOverlay = new ThreeStateLocationOverlay(getActivity(), mapView.getModel().mapViewPosition);

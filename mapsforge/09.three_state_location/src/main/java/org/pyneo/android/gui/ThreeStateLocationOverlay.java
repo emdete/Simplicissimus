@@ -215,7 +215,7 @@ public class ThreeStateLocationOverlay extends Layer implements LocationListener
 					}
 				}
 			}
-			LatLong latLong = new LatLong(location.getLatitude(), location.getLongitude(), true);
+			LatLong latLong = new LatLong(location.getLatitude(), location.getLongitude());
 			marker.setLatLong(latLong);
 			circle.setLatLong(latLong);
 			if (centerAtNextFix || snapToLocationEnabled) {
