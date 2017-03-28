@@ -1,0 +1,33 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:2.3.+'
+	}
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile 'com.android.support:support-v4:19.0.0'
+	compile 'org.codepond:wizardroid:1.2.0'
+}
+
+android {
+	compileSdkVersion 21
+	buildToolsVersion "25.0.0"
+	defaultConfig {
+		minSdkVersion 21
+		targetSdkVersion 21
+	}
+	android {
+		lintOptions {
+			abortOnError false
+		}
+	}
+}

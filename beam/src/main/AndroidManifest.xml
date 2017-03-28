@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
-	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="de.emdete.android.gui" android:versionCode="1" android:versionName="1.0" >
 	<uses-feature android:name="android.hardware.nfc" android:required="true" />
 	<uses-permission android:name="android.permission.NFC" />
 	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="false" >
@@ -12,7 +11,7 @@
 			<intent-filter>
 				<action android:name="android.nfc.action.NDEF_DISCOVERED"/>
 				<category android:name="android.intent.category.DEFAULT"/>
-				<data android:mimeType="application/vnd.org.pyneo.android.sample"/>
+				<data android:mimeType="application/vnd.de.emdete.android.sample"/>
 			</intent-filter>
 		</activity>
 	</application>

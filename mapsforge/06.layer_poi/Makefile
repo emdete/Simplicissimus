@@ -8,10 +8,10 @@ run:
 
 dbg: run
 	#chmod 0644 build/outputs/apk/*-debug.apk
-	#rsync --verbose --archive build/outputs/apk/*-debug.apk littlelun.emdete.de:/var/www/pyneo.org/c/.
-	#adb uninstall org.pyneo.android.gui
+	#rsync --verbose --archive build/outputs/apk/*-debug.apk littlelun.emdete.de:/var/www/emdete.de/c/.
+	#adb uninstall de.emdete.android.gui
 	adb install -r build/outputs/apk/*-debug.apk
-	adb shell am start org.pyneo.android.gui/.Sample
+	adb shell am start de.emdete.android.gui/.Sample
 
 clean:
 	./gradlew -q clean

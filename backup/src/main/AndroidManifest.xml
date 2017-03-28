@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="de.emdete.android.gui" android:versionCode="1" android:versionName="1.0">
+	<application android:label="Sample" android:icon="@drawable/ic_launcher" android:allowBackup="true" android:backupAgent="PyneoBackupAgent" >
+		<activity android:label="Sample" android:name="Sample" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<meta-data android:name="com.google.android.backup.api_key"
+			android:value="AEdPqrEAAAAI7_yf1xqlpltWZPZiKMHVlDgn3nMfgotjUweSUg" />
+	</application>
+</manifest>

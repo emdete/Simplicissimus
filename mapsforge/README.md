@@ -22,7 +22,7 @@ download a map via
 
 and push it to the mobile:
 
-	adb push germany.map /storage/sdcard1/Android/data/org.pyneo.tabulae/files/maps/mapsforge
+	adb push germany.map /storage/sdcard1/Android/data/de.emdete.tabulae/files/maps/mapsforge
 
 alternativly use:
 

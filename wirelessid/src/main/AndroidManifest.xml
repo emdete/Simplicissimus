@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.pyneo.android.gui" android:versionCode="1" android:versionName="1.0" >
-	<uses-sdk android:minSdkVersion="11" android:targetSdkVersion="19" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="de.emdete.android.gui" android:versionCode="1" android:versionName="1.0" >
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -13,7 +12,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<receiver android:name="org.pyneo.android.wirelessid.ScanResultsAvailable">
+		<receiver android:name="de.emdete.android.wirelessid.ScanResultsAvailable">
 			<intent-filter>
 				<action android:name="android.net.wifi.SCAN_RESULTS_AVAILABLE_ACTION"/>
 			</intent-filter>

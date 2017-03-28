@@ -3,7 +3,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.1.0-alpha3'
+		classpath 'com.android.tools.build:gradle:2.3.+'
 	}
 }
 
@@ -11,16 +11,14 @@ apply plugin: 'com.android.application'
 
 repositories {
 	jcenter()
-	// maven { url "http://maven.rushorm.com" }
 }
 
 dependencies {
-	// compile 'co.uk.rushorm:rushandroid:1.1.9'
 }
 
 android {
 	compileSdkVersion 21
-	buildToolsVersion "21.1.2"
+	buildToolsVersion "25.0.0"
 	defaultConfig {
 		minSdkVersion 21
 		targetSdkVersion 21

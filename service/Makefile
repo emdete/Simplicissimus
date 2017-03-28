@@ -7,9 +7,9 @@ run:
 	./gradlew -q assembleDebug
 
 dbg: run
-	#adb uninstall org.pyneo.android.gui
-	adb install -r build/outputs/apk/*-debug-unaligned.apk
-	adb shell am start org.pyneo.android.gui/.Sample
+	#adb uninstall de.emdete.android.gui
+	adb install -r build/outputs/apk/*-debug.apk
+	adb shell am start de.emdete.android.gui/.Sample
 
 clean:
 	./gradlew -q clean

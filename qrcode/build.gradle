@@ -3,7 +3,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:1.1.+'
+		classpath 'com.android.tools.build:gradle:2.3.+'
 	}
 }
 
@@ -16,13 +16,13 @@ repositories {
 dependencies {
 	compile 'com.android.support:support-v4:18.0.+'
 	compile 'com.android.support:appcompat-v7:19.0.+'
-	compile project(':libraries:zxing')
-	compile project(':libraries:zxing-android-integration')
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.google.zxing:android-integration:3.2.1'
 }
 
 android {
 	compileSdkVersion 21
-	buildToolsVersion "21.1.1"
+	buildToolsVersion "25.0.0"
 	defaultConfig {
 		minSdkVersion 21
 		targetSdkVersion 21

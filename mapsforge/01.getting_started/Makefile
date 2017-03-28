@@ -7,9 +7,9 @@ run:
 	./gradlew -q assembleDebug
 
 dbg: run
-	#adb uninstall org.pyneo.android.gui
+	#adb uninstall de.emdete.android.gui
 	adb install -r build/outputs/apk/*-debug.apk
-	adb shell am start org.pyneo.android.gui/.Sample
+	adb shell am start de.emdete.android.gui/.Sample
 
 clean:
 	./gradlew -q clean

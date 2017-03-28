@@ -7,13 +7,13 @@ run:
 	./gradlew -q assembleDebug
 
 dbg: run
-	#adb uninstall org.pyneo.android.gui
-	adb install -r build/apk/*-debug-unaligned.apk
-	adb shell am start org.pyneo.android.gui/.Sample
+	#adb uninstall de.emdete.android.gui
+	adb install -r build/outputs/apk/*-debug.apk
+	adb shell am start de.emdete.android.gui/.Sample
 
 clean:
 	./gradlew -q clean
 
 d:
-	meld src/main/java/org/pyneo/android/wirelessid ../../proprorep/src/main/java/org/pyneo/android/wirelessid
-	meld src/main/java/org/pyneo/android/wirelessid ../../pyneo-wirelesslocation/src/org/pyneo/android/wirelessid
+	meld src/main/java/de.emdete/android/wirelessid ../../proprorep/src/main/java/org/pyneo/android/wirelessid
+	meld src/main/java/de.emdete/android/wirelessid ../../pyneo-wirelesslocation/src/org/pyneo/android/wirelessid

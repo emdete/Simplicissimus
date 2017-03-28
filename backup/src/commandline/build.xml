@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project default="all" basedir=".">
+	<path id="classpath">
+		<fileset dir=".">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<target name="all" depends="compile" />
+	<target name="compile">
+		<javac srcdir="." debug="yes">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+	<target name="run" depends="compile">
+		<java classname="Decompress" fork="yes" classpath=".">
+			<classpath refid="classpath"/>
+		</java>
+	</target>
+</project>

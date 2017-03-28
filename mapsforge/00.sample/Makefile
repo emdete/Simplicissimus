@@ -7,7 +7,7 @@ run:
 	./gradlew -q assembleDebug
 
 dbg: run
-	#adb uninstall org.pyneo.android.gui
+	#adb uninstall de.emdete.android.gui
 	adb install -r build/outputs/apk/*-debug.apk
 	adb shell am start org.mapsforge.applications.android.samples/.Samples
 
