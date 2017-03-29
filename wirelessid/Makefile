@@ -15,5 +15,5 @@ clean:
 	./gradlew -q clean
 
 d:
-	meld src/main/java/de.emdete/android/wirelessid ../../proprorep/src/main/java/org/pyneo/android/wirelessid
-	meld src/main/java/de.emdete/android/wirelessid ../../pyneo-wirelesslocation/src/org/pyneo/android/wirelessid
+	meld src/main/java/de.emdete/android/wirelessid ../../proprorep/src/main/java/de/emdete/android/wirelessid
+	meld src/main/java/de.emdete/android/wirelessid ../../emdete-wirelesslocation/src/de/emdete/android/wirelessid
