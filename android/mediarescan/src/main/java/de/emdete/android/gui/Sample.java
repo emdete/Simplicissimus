@@ -104,17 +104,33 @@ public class Sample extends Activity {
 		if (DEBUG) Log.d(TAG, "onDestroy");
 	}
 
-	public void doTest(Context context) {
-		Button button = (Button)findViewById(R.id.button);
-		recurseMediaDb(context);
-		//add_scanner(context, new File("/sdcard/Pictures/test.jpg"));
-		//recurseFilesystem(context, new File("/storage"));
-		button.setText("Started");
+	void setText(final String s) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Button button = (Button)findViewById(R.id.button);
+				button.setText(s);
+			}
+		});
 	}
 
-	int c = 100;
-	void recurseFilesystem(Context context, File file) {
-		if (c-- <= 0)
+	public void doTest(final Context context) {
+		setText("Started");
+		//add_scanner(context, new File("/sdcard/Pictures/test.jpg"));
+		new Thread() {
+			@Override
+			public void run() {
+				recurseMediaDb(context);
+				recurseFilesystem(context, new File("/storage"), 0);
+			}
+		}.run();
+	}
+
+	/**
+		Method to recurse through the filesystem and check if the file exists
+		in the MediaStore.
+	*/
+	void recurseFilesystem(Context context, File file, int depth) {
+		if (depth > 100)
 			return;
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
@@ -123,7 +139,7 @@ public class Sample extends Activity {
 					if (!current.isHidden()) {
 						if (current.isDirectory()) {
 							if (!new File(current, ".nomedia").exists()) {
-								recurseFilesystem(context, current);
+								recurseFilesystem(context, current, depth+1);
 							}
 						}
 						else {
@@ -139,6 +155,9 @@ public class Sample extends Activity {
 		}
 	}
 
+	/**
+		Method to show code how to get the Thumbnail from the MediaStore.
+	*/
 	File getThumbnail(Context context, long id) throws IOException {
 		Cursor cursor = MediaStore.Images.Thumbnails.queryMiniThumbnail(
 			context.getContentResolver(),
@@ -159,7 +178,13 @@ public class Sample extends Activity {
 		sendBroadcast(intent);
 	}
 
+	/**
+		Method to add a file to the MediaScanner (either cause it exists or it
+		doesnt - we have no other choice).
+	*/
 	void add_scanner(Context context, File file) {
+		Button button = (Button)findViewById(R.id.button);
+		button.setText("Found: " + file);
 		MediaScannerConnection.scanFile(
 			context,
 			new String[]{
@@ -187,8 +212,11 @@ public class Sample extends Activity {
 		}
 	}
 
+	/**
+		Method to iterate through all media mentioned in the MediaStore and
+		check if they still exist.
+	*/
 	void recurseMediaDb(Context context) {
-		c = 100;
 		for (String volumeName: new String[]{"external", "internal", }) {
 			if (DEBUG) Log.d(TAG, "recurseMediaDb contentUri=" + MediaStore.Files.getContentUri(volumeName));
 			Cursor cursor = context.getContentResolver().query(
