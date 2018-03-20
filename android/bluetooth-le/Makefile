@@ -8,7 +8,7 @@ run:
 
 dbg: run
 	#adb uninstall de.emdete.android.gui
-	adb install -r build/outputs/apk/*-debug.apk
+	adb install -r build/outputs/apk/debug/*-debug.apk
 	adb shell am start de.emdete.android.gui/.Sample
 
 clean:

@@ -18,7 +18,6 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +28,7 @@ import android.widget.Button;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
 
 public class Sample extends Activity {
@@ -54,94 +54,6 @@ public class Sample extends Activity {
 	String device_address;
 	String device_name;
 	int counter;
-	final ScanCallback scanCallback = new ScanCallback() {
-		/*public void onBatchScanResults(List<ScanResult> results) {
-			for (ScanResult result: results) {
-				onScanResult(ScanSettings.CALLBACK_TYPE_ALL_MATCHES, result);
-			}
-		}*/
-		public void onScanFailed(int errorCode) {
-			Log.e(TAG, "onScanFailed() errorCode=" + errorCode);
-			((Button) findViewById(R.id.button)).setText("Stopped");
-		}
-
-		public void onScanResult(int callbackType, ScanResult result) {
-			//BluetoothDevice device = result.getDevice();
-			//int rssi = result.getRssi();
-			//long timestamp = result.getTimestampNanos();
-			ScanRecord record = result.getScanRecord();
-			//Map<ParcelUuid, byte[]> serviceDataList = record.getServiceData();
-			byte[] temperature = record.getServiceData(TEMPERATURE);
-			if (temperature != null) {
-				final String tempStr = "" + (counter++) + ": " + tempFromBytes(temperature) + "°C";
-				Log.d(TAG, "temperature=" + tempStr);
-				((Button) findViewById(R.id.button)).setText(tempStr);
-				if (device_name == null) {
-					device_address = result.getDevice().getAddress();
-					device_name = record.getDeviceName();
-					bluetoothLeScanner.stopScan(scanCallback);
-					step_3();
-				}
-				return;
-			}
-			//byte[] battery = record.getServiceData(BATTERY);
-			Log.e(TAG, "onScanResult() result=" + result);
-		}
-	};
-	final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-		@Override public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-			assert gatt == bluetoothGatt;
-			switch (newState) {
-				case BluetoothProfile.STATE_CONNECTING:
-					Log.i(TAG, "STATE_CONNECTING:" + gatt);
-					((Button) findViewById(R.id.button)).setText("Connecting");
-					break;
-				case BluetoothProfile.STATE_CONNECTED:
-					Log.i(TAG, "STATE_CONNECTED: Attempting to start service discovery" + gatt);
-					((Button) findViewById(R.id.button)).setText("Connected");
-					bluetoothGatt.discoverServices();
-					break;
-				case BluetoothProfile.STATE_DISCONNECTING:
-					Log.i(TAG, "STATE_DISCONNECTING:" + gatt);
-					((Button) findViewById(R.id.button)).setText("Disconnecting");
-					break;
-				case BluetoothProfile.STATE_DISCONNECTED:
-					Log.i(TAG, "STATE_DISCONNECTED:" + gatt);
-					((Button) findViewById(R.id.button)).setText("Disconnected");
-					bluetoothGatt.close();
-					bluetoothGatt = null;
-					break;
-				default:
-					Log.d(TAG, "onConnectionStateChange: status=" + status + ", newState=" + newState);
-					break;
-			}
-		}
-
-		@Override public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-			Log.d(TAG, "onCharacteristicChanged:");
-		}
-
-		@Override public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-			Log.d(TAG, "onCharacteristicRead: status=" + status);
-		}
-
-		@Override public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-			Log.d(TAG, "onCharacteristicRead: status=" + status);
-		}
-
-		@Override public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-			Log.d(TAG, "onReadRemoteRssi: status=" + status);
-		}
-
-		@Override public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-			Log.d(TAG, "onServicesDiscovered: status=" + status);
-		}
-
-		@Override public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-			Log.d(TAG, "onDescriptorRead: status=" + status);
-		}
-
-	};
 
 	float tempFromBytes(byte[] temperature) {
 		if (false)
@@ -157,28 +69,29 @@ public class Sample extends Activity {
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(TAG, "onCreate savedInstanceState=" + savedInstanceState);
-		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-		Log.d(TAG, "onCreate preferences=" + preferences.getAll());
-		device_address = preferences.getString("device_address",
-			savedInstanceState==null?null:savedInstanceState.getString("device_address")); // "C5:D0:0A:0F:D6:1F");
-		device_name = preferences.getString("device_name",
-			savedInstanceState==null?null:savedInstanceState.getString("device_name")); // "F16D0D5C");
-		Log.d(TAG, "onCreate device_address=" + device_address + ", device_name=" + device_name);
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override public void uncaughtException(Thread thread, Throwable e) {
 				Log.e(TAG, "error e=" + e, e);
 				finish();
 			}
 		});
+		if (savedInstanceState != null) {
+			Log.d(TAG, "onCreate savedInstanceState=" + savedInstanceState);
+			device_address = savedInstanceState.getString("device_address");
+			device_name = savedInstanceState.getString("device_name");
+		}
+		Log.d(TAG, "onCreate device_address=" + device_address + ", device_name=" + device_name);
 		setContentView(R.layout.main);
-		findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+		Button b = ((Button)findViewById(R.id.button));
+		b.setText("Go!");
+		b.setOnClickListener(new View.OnClickListener() {
+			int c=0;
 			@Override public void onClick(View view) {
 				Log.d(TAG, "onClick");
+				((Button)view).setText("Go! " + ++c);
 				step_rep();
 			}
 		});
-		((Button)findViewById(R.id.button)).setText("Go!");
 	}
 
 	@Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -199,12 +112,16 @@ public class Sample extends Activity {
 			bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 			bluetoothAdapter = bluetoothManager.getAdapter();
 			if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+				Log.d(TAG, "step_1 bt enabled, next step");
 				step_2();
-			} else {
+			}
+			else {
+				Log.d(TAG, "step_1 enable bt");
 				startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
 			}
 		}
 		else {
+			Log.d(TAG, "step_1 bt not available");
 			; // tell user he has no bt
 		}
 	}
@@ -214,11 +131,37 @@ public class Sample extends Activity {
 		bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 		if (bluetoothLeScanner != null) {
 			if (device_address != null) {
+				Log.d(TAG, "step 2 device_address=" + device_address + " known, next step");
 				step_3();
-			} else {
-				bluetoothLeScanner.startScan(scanCallback);
 			}
-		} else {
+			else {
+				Log.d(TAG, "step 2 scan for device address");
+				bluetoothLeScanner.startScan(new ScanCallback() {
+					public void onScanResult(int callbackType, ScanResult result) {
+						Log.e(TAG, "onScanResult");
+						switch (callbackType) {
+							case ScanSettings.CALLBACK_TYPE_ALL_MATCHES: { // CALLBACK_TYPE_ALL_MATCHES CALLBACK_TYPE_FIRST_MATCH CALLBACK_TYPE_MATCH_LOST
+								ScanRecord record = result.getScanRecord();
+								List serviceUuids = record.getServiceUuids();
+								Log.e(TAG, "onScanResult serviceUuids=" + serviceUuids);
+								if (serviceUuids.contains(TEMPERATURE)) {
+									device_address = result.getDevice().getAddress();
+									device_name = record.getDeviceName();
+									Log.e(TAG, "onScanResult device_name=" + device_name + ", device_address=" + device_address);
+									bluetoothLeScanner.stopScan(this);
+									step_3();
+								}
+							}
+							break;
+							default:
+								Log.e(TAG, "onScanResult unknown callbackType=" + callbackType);
+							break;
+						}
+					}
+				});
+			}
+		}
+		else {
 			Log.d(TAG, "step 2 failed: no BT LE");
 		}
 	}
@@ -232,13 +175,64 @@ public class Sample extends Activity {
 		ScanFilter.Builder builderF = new ScanFilter.Builder();
 		builderF.setDeviceAddress(device_address);
 		filters.add(builderF.build());
-		bluetoothLeScanner.startScan(filters, builderS.build(), scanCallback);
+		bluetoothLeScanner.startScan(filters, builderS.build(), new ScanCallback() {
+			public void onScanResult(int callbackType, ScanResult result) {
+				Log.e(TAG, "onScanResult");
+				ScanRecord record = result.getScanRecord();
+				byte[] data;
+				if ((data = record.getServiceData(TEMPERATURE)) != null) {
+					final String temperature = "" + (counter++) + ": " + tempFromBytes(data) + "°C";
+					Log.d(TAG, "temperature=" + temperature);
+					((Button)findViewById(R.id.button)).setText(temperature);
+				}
+				else if ((data = record.getServiceData(BATTERY)) != null) {
+					; // decode, warn on low
+				}
+				else {
+					Log.e(TAG, "onScanResult not a TEMPERATURE, result=" + result);
+				}
+			}
+		});
 		device = bluetoothAdapter.getRemoteDevice(device_address);
 		if (device == null) {
 			Log.d(TAG, "step 3 failed: no DEV");
 			return;
 		}
-		bluetoothGatt = device.connectGatt(this, true, mGattCallback);
+		bluetoothGatt = device.connectGatt(this, true, new BluetoothGattCallback() {
+			@Override public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+				assert gatt == bluetoothGatt;
+				switch (newState) {
+					case BluetoothProfile.STATE_CONNECTING:
+						Log.i(TAG, "onConnectionStateChange: STATE_CONNECTING:" + gatt);
+						((Button) findViewById(R.id.button)).setText("Connecting");
+						break;
+					case BluetoothProfile.STATE_CONNECTED:
+						Log.i(TAG, "onConnectionStateChange: STATE_CONNECTED: Attempting to start service discovery" + gatt);
+						((Button) findViewById(R.id.button)).setText("Connected");
+						bluetoothGatt.discoverServices();
+						break;
+					case BluetoothProfile.STATE_DISCONNECTING:
+						Log.i(TAG, "onConnectionStateChange: STATE_DISCONNECTING:" + gatt);
+						((Button) findViewById(R.id.button)).setText("Disconnecting");
+						break;
+					case BluetoothProfile.STATE_DISCONNECTED:
+						Log.i(TAG, "onConnectionStateChange: STATE_DISCONNECTED:" + gatt);
+						((Button) findViewById(R.id.button)).setText("Disconnected");
+						bluetoothGatt.close();
+						bluetoothGatt = null;
+						break;
+					default:
+						Log.d(TAG, "onConnectionStateChange: status=" + status + ", newState=" + newState);
+						break;
+				}
+			}
+			@Override public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) { Log.d(TAG, "onCharacteristicChanged:"); }
+			@Override public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) { Log.d(TAG, "onCharacteristicRead: status=" + status); }
+			@Override public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) { Log.d(TAG, "onCharacteristicRead: status=" + status); }
+			@Override public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) { Log.d(TAG, "onReadRemoteRssi: status=" + status); }
+			@Override public void onServicesDiscovered(BluetoothGatt gatt, int status) { Log.d(TAG, "onServicesDiscovered: status=" + status); }
+			@Override public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) { Log.d(TAG, "onDescriptorRead: status=" + status); }
+		});
 		if (bluetoothGatt == null) {
 			Log.d(TAG, "step 3 failed: no GATT");
 			return;
@@ -252,19 +246,23 @@ public class Sample extends Activity {
 		Log.d(TAG, "step_rep");
 		if (bluetoothGatt != null && characteristic != null) {
 			bluetoothGatt.connect();
+			Log.d(TAG, "step_rep connected");
 			if (bluetoothGatt.readCharacteristic(characteristic)) {
-				Log.d(TAG, "read characteristic=" + characteristic);
+				Log.d(TAG, "step_rep read characteristic=" + characteristic);
 			}
 			else {
-				Log.d(TAG, "not read characteristic=" + characteristic);
+				Log.d(TAG, "step_rep not read characteristic=" + characteristic);
 			}
+		}
+		else {
+			Log.d(TAG, "step_rep no bluetoothGatt/characteristic yet, abort");
 		}
 	}
 
 	void step_close() {
 		Log.d(TAG, "step_close");
 		if (bluetoothLeScanner != null) {
-			bluetoothLeScanner.stopScan(scanCallback);
+			bluetoothLeScanner.stopScan(null);
 			bluetoothLeScanner = null;
 		}
 		if (bluetoothGatt != null) {
@@ -297,11 +295,6 @@ public class Sample extends Activity {
 		super.onPause();
 		Log.d(TAG, "onPause");
 		step_close();
-		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString("device_address", device_address);
-		editor.putString("device_name", device_name);
-		editor.commit();
 	}
 
 	@Override protected void onStop() {
@@ -312,8 +305,8 @@ public class Sample extends Activity {
 	@Override protected void onSaveInstanceState(Bundle bundle) {
 		super.onSaveInstanceState(bundle);
 		Log.d(TAG, "onSaveInstanceState bundle=" + bundle);
-		bundle.putString("device_address", device_address.toLowerCase());
-		bundle.putString("device_name", device_name);
+		if (device_address!=null) bundle.putString("device_address", device_address);
+		if (device_name!=null) bundle.putString("device_name", device_name);
 	}
 
 	@Override protected void onDestroy() {
