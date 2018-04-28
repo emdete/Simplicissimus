@@ -29,7 +29,7 @@ public class Sample extends Activity {
 		});
 		setContentView(R.layout.main);
 		context = getBaseContext();
-        dbHelper = new SQLiteOpenHelper(context, "sample", null, 1){
+		dbHelper = new SQLiteOpenHelper(context, "sample", null, 1){
 			@Override public void onCreate(SQLiteDatabase db) {
 				Log.d(TAG, "create=" + StoreObject.create(db, Meta.class));
 				Log.d(TAG, "create=" + StoreObject.create(db, Item.class));
