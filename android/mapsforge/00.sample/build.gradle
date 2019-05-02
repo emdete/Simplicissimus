@@ -1,9 +1,10 @@
 buildscript {
 	repositories {
 		jcenter()
+		google()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:1.1.+'
+		classpath 'com.android.tools.build:gradle:3.4.0'
 	}
 }
 
@@ -20,7 +21,7 @@ dependencies {
 
 android {
 	compileSdkVersion 21
-	buildToolsVersion "21.1.1"
+	buildToolsVersion "25.0.0"
 	defaultConfig {
 		minSdkVersion 21
 		targetSdkVersion 21

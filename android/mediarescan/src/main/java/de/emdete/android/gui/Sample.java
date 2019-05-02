@@ -120,7 +120,7 @@ public class Sample extends Activity {
 			@Override
 			public void run() {
 				recurseMediaDb(context);
-				recurseFilesystem(context, new File("/storage"), 0);
+				recurseFilesystem(context, new File("/sdcard/."), 0);
 			}
 		}.run();
 	}
@@ -151,7 +151,7 @@ public class Sample extends Activity {
 			}
 		}
 		else {
-			if (DEBUG) Log.d(TAG, "OUPS");
+			if (DEBUG) Log.d(TAG, "not a directory");
 		}
 	}
 

@@ -13,5 +13,4 @@ dbg: run
 
 clean:
 	./gradlew -q clean
-	rm -f backup.* *.class
 

@@ -30,11 +30,20 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
+import java.util.UUID;
 
 public class Sample extends Activity {
 	public static final String TAG = "de.emdete.sample";
 	public static final ParcelUuid TEMPERATURE = ParcelUuid.fromString("00001809-0000-1000-8000-00805f9b34fb");
 	public static final ParcelUuid BATTERY = ParcelUuid.fromString("0000180f-0000-1000-8000-00805f9b34fb");
+
+	public static final UUID CHARACTERISTIC_BATTERY = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+	public static final UUID CHARACTERISTIC_OFFLINE = UUID.fromString("00002a1c-0000-1000-8000-00805f9b34fb");
+	public static final UUID CHARACTERISTIC_ONLINE = UUID.fromString("00002a1e-0000-1000-8000-00805f9b34fb");
+	public static final UUID CHARACTERISTIC_UTC = UUID.fromString("00002a2b-0000-1000-8000-00805f9b34fb");
+	public static final UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+	public static final UUID SERVICE_BATTERY = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
+	public static final UUID SERVICE_TEMPERATURE = UUID.fromString("00001809-0000-1000-8000-00805f9b34fb");
 
 	final Handler mHandler = new Handler() {
 		@Override public void handleMessage(Message msg) {
@@ -50,7 +59,6 @@ public class Sample extends Activity {
 	BluetoothGatt bluetoothGatt;
 	BluetoothLeScanner bluetoothLeScanner;
 	BluetoothDevice device;
-	BluetoothGattCharacteristic characteristic;
 	String device_address;
 	String device_name;
 	int counter;
@@ -89,7 +97,8 @@ public class Sample extends Activity {
 			@Override public void onClick(View view) {
 				Log.d(TAG, "onClick");
 				((Button)view).setText("Go! " + ++c);
-				step_rep();
+				step_close();
+				step_1();
 			}
 		});
 	}
@@ -97,7 +106,7 @@ public class Sample extends Activity {
 	@Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, "onActivityResult");
 		switch (requestCode) {
-			case 1:
+			case 4711:
 				step_1();
 				break;
 			default:
@@ -108,91 +117,68 @@ public class Sample extends Activity {
 
 	void step_1() {
 		Log.d(TAG, "step_1");
-		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-			bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-			bluetoothAdapter = bluetoothManager.getAdapter();
-			if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-				Log.d(TAG, "step_1 bt enabled, next step");
-				step_2();
-			}
-			else {
-				Log.d(TAG, "step_1 enable bt");
-				startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
-			}
-		}
-		else {
+		if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
 			Log.d(TAG, "step_1 bt not available");
-			; // tell user he has no bt
+			return; // tell user he has no bt
 		}
+		bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+		bluetoothAdapter = bluetoothManager.getAdapter();
+		if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+			Log.d(TAG, "step_1 bt enabled, next step");
+			step_2();
+			return;
+		}
+		Log.d(TAG, "step_1 enable bt");
+		startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 4711);
 	}
 
 	void step_2() {
 		Log.d(TAG, "step_2");
 		bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-		if (bluetoothLeScanner != null) {
-			if (device_address != null) {
-				Log.d(TAG, "step 2 device_address=" + device_address + " known, next step");
-				step_3();
-			}
-			else {
-				Log.d(TAG, "step 2 scan for device address");
-				bluetoothLeScanner.startScan(new ScanCallback() {
-					public void onScanResult(int callbackType, ScanResult result) {
-						Log.e(TAG, "onScanResult");
-						switch (callbackType) {
-							case ScanSettings.CALLBACK_TYPE_ALL_MATCHES: { // CALLBACK_TYPE_ALL_MATCHES CALLBACK_TYPE_FIRST_MATCH CALLBACK_TYPE_MATCH_LOST
-								ScanRecord record = result.getScanRecord();
-								List serviceUuids = record.getServiceUuids();
-								Log.e(TAG, "onScanResult serviceUuids=" + serviceUuids);
-								if (serviceUuids.contains(TEMPERATURE)) {
-									device_address = result.getDevice().getAddress();
-									device_name = record.getDeviceName();
-									Log.e(TAG, "onScanResult device_name=" + device_name + ", device_address=" + device_address);
-									bluetoothLeScanner.stopScan(this);
-									step_3();
-								}
-							}
-							break;
-							default:
-								Log.e(TAG, "onScanResult unknown callbackType=" + callbackType);
-							break;
+		if (bluetoothLeScanner == null) {
+			Log.d(TAG, "step 2 failed: no BT LE");
+			return;
+		}
+		if (device_address != null) {
+			Log.d(TAG, "step 2 device_address=" + device_address + " known, next step");
+			step_3();
+			return;
+		}
+		Log.d(TAG, "step 2 scan for device address");
+		bluetoothLeScanner.startScan(new ScanCallback() {
+			public void onScanResult(int callbackType, ScanResult result) {
+				Log.e(TAG, "onScanResult");
+				switch (callbackType) {
+					case ScanSettings.CALLBACK_TYPE_ALL_MATCHES: { // CALLBACK_TYPE_ALL_MATCHES CALLBACK_TYPE_FIRST_MATCH CALLBACK_TYPE_MATCH_LOST
+						ScanRecord record = result.getScanRecord();
+						List serviceUuids = record.getServiceUuids();
+						Log.e(TAG, "onScanResult serviceUuids=" + serviceUuids);
+						if (serviceUuids.contains(TEMPERATURE)) {
+							device_address = result.getDevice().getAddress();
+							device_name = record.getDeviceName();
+							Log.e(TAG, "onScanResult device_name=" + device_name + ", device_address=" + device_address);
+							if (bluetoothLeScanner!= null) bluetoothLeScanner.stopScan(this);
+							step_3();
 						}
 					}
-				});
+					break;
+					default:
+						Log.e(TAG, "onScanResult unknown callbackType=" + callbackType);
+					break;
+				}
 			}
-		}
-		else {
-			Log.d(TAG, "step 2 failed: no BT LE");
-		}
+		});
+		/*
+		bluetoothAdapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
+			@Override public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+				Log.e(TAG, "onLeScan: device=" + device);
+			}
+		});
+		*/
 	}
 
 	void step_3() {
 		Log.d(TAG, "step_3");
-		ScanSettings.Builder builderS = new ScanSettings.Builder();
-		builderS.setReportDelay(0);
-		builderS.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
-		List<ScanFilter> filters = new ArrayList<>(1);
-		ScanFilter.Builder builderF = new ScanFilter.Builder();
-		builderF.setDeviceAddress(device_address);
-		filters.add(builderF.build());
-		bluetoothLeScanner.startScan(filters, builderS.build(), new ScanCallback() {
-			public void onScanResult(int callbackType, ScanResult result) {
-				Log.e(TAG, "onScanResult");
-				ScanRecord record = result.getScanRecord();
-				byte[] data;
-				if ((data = record.getServiceData(TEMPERATURE)) != null) {
-					final String temperature = "" + (counter++) + ": " + tempFromBytes(data) + "°C";
-					Log.d(TAG, "temperature=" + temperature);
-					((Button)findViewById(R.id.button)).setText(temperature);
-				}
-				else if ((data = record.getServiceData(BATTERY)) != null) {
-					; // decode, warn on low
-				}
-				else {
-					Log.e(TAG, "onScanResult not a TEMPERATURE, result=" + result);
-				}
-			}
-		});
 		device = bluetoothAdapter.getRemoteDevice(device_address);
 		if (device == null) {
 			Log.d(TAG, "step 3 failed: no DEV");
@@ -210,19 +196,21 @@ public class Sample extends Activity {
 						Log.i(TAG, "onConnectionStateChange: STATE_CONNECTED: Attempting to start service discovery" + gatt);
 						((Button) findViewById(R.id.button)).setText("Connected");
 						bluetoothGatt.discoverServices();
+						step_4();
 						break;
 					case BluetoothProfile.STATE_DISCONNECTING:
 						Log.i(TAG, "onConnectionStateChange: STATE_DISCONNECTING:" + gatt);
 						((Button) findViewById(R.id.button)).setText("Disconnecting");
+						step_close();
 						break;
 					case BluetoothProfile.STATE_DISCONNECTED:
 						Log.i(TAG, "onConnectionStateChange: STATE_DISCONNECTED:" + gatt);
 						((Button) findViewById(R.id.button)).setText("Disconnected");
-						bluetoothGatt.close();
-						bluetoothGatt = null;
+						step_close();
 						break;
 					default:
 						Log.d(TAG, "onConnectionStateChange: status=" + status + ", newState=" + newState);
+						step_close();
 						break;
 				}
 			}
@@ -237,26 +225,78 @@ public class Sample extends Activity {
 			Log.d(TAG, "step 3 failed: no GATT");
 			return;
 		}
-		characteristic = new BluetoothGattCharacteristic(TEMPERATURE.getUuid(), 0, BluetoothGattCharacteristic.PERMISSION_READ);
-		bluetoothGatt.setCharacteristicNotification(characteristic, true);
-		step_rep();
+		bluetoothGatt.connect();
 	}
 
-	void step_rep() {
-		Log.d(TAG, "step_rep");
-		if (bluetoothGatt != null && characteristic != null) {
-			bluetoothGatt.connect();
-			Log.d(TAG, "step_rep connected");
-			if (bluetoothGatt.readCharacteristic(characteristic)) {
-				Log.d(TAG, "step_rep read characteristic=" + characteristic);
-			}
-			else {
-				Log.d(TAG, "step_rep not read characteristic=" + characteristic);
-			}
+	void step_4() {
+		Log.d(TAG, "step 4: ");
+		BluetoothGattCharacteristic characteristic = bluetoothGatt.getService(SERVICE_TEMPERATURE).getCharacteristic(CHARACTERISTIC_ONLINE);
+		bluetoothGatt.setCharacteristicNotification(
+			//new BluetoothGattCharacteristic(TEMPERATURE.getUuid(), 0, BluetoothGattCharacteristic.PERMISSION_READ),
+			characteristic,
+			true);
+		BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+		if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)) {
+			Log.d(TAG, "step 4: written TEMP");
+			bluetoothGatt.writeDescriptor(descriptor);
 		}
-		else {
-			Log.d(TAG, "step_rep no bluetoothGatt/characteristic yet, abort");
+		characteristic = bluetoothGatt.getService(SERVICE_BATTERY).getCharacteristic(CHARACTERISTIC_BATTERY);
+		bluetoothGatt.setCharacteristicNotification(characteristic, true);
+		descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+		if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)) {
+			Log.d(TAG, "step 4: written BAT");
+			bluetoothGatt.writeDescriptor(descriptor);
 		}
+		ScanSettings.Builder builderS = new ScanSettings.Builder();
+		builderS.setReportDelay(0);
+		builderS.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
+		List<ScanFilter> filters = new ArrayList<>(1);
+		ScanFilter.Builder builderF = new ScanFilter.Builder();
+		builderF.setDeviceAddress(device_address);
+		filters.add(builderF.build());
+		bluetoothLeScanner.startScan(filters, builderS.build(), new ScanCallback() {
+			public void onScanResult(int callbackType, ScanResult result) {
+				Log.e(TAG, "onScanResult");
+				switch (callbackType) {
+					case ScanSettings.CALLBACK_TYPE_ALL_MATCHES: { // CALLBACK_TYPE_ALL_MATCHES CALLBACK_TYPE_FIRST_MATCH CALLBACK_TYPE_MATCH_LOST
+						ScanRecord record = result.getScanRecord();
+						byte[] data;
+						if ((data = record.getServiceData(TEMPERATURE)) != null) {
+							final String temperature = "" + (counter++) + ": " + tempFromBytes(data) + "°C";
+							Log.d(TAG, "temperature=" + temperature);
+							((Button)findViewById(R.id.button)).setText(temperature);
+						}
+						else if ((data = record.getServiceData(BATTERY)) != null) {
+							; // decode, warn on low
+						}
+						else {
+							Log.e(TAG, "onScanResult doesnt contain a TEMPERATURE or BATTERY, serviceData=" + record.getServiceData());
+						}
+					}
+					break;
+					default:
+						Log.e(TAG, "onScanResult unknown callbackType=" + callbackType);
+					break;
+				}
+			}
+		});
+	}
+
+	void step_5() {
+		Log.d(TAG, "step_5");
+		if (bluetoothGatt == null) {
+			Log.d(TAG, "step_5 no bluetoothGatt yet, abort");
+			return;
+		}
+		/*
+		BluetoothGattCharacteristic characteristic = new BluetoothGattCharacteristic();
+		if (!bluetoothGatt.readCharacteristic(characteristic)) {
+			Log.d(TAG, "step_5 couldnt not read characteristic");
+			return;
+		}
+		Log.d(TAG, "step_5 read characteristic=" + characteristic);
+		*/
+		Log.d(TAG, "step_5 done");
 	}
 
 	void step_close() {
@@ -278,7 +318,6 @@ public class Sample extends Activity {
 	@Override protected void onStart() {
 		super.onStart();
 		Log.d(TAG, "onStart");
-		step_1();
 	}
 
 	@Override protected void onRestart() {
